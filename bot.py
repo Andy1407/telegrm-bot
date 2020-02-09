@@ -54,7 +54,7 @@ def text_messages(message):
 
             if len(date) < 3:
                 date.append("error")
-            date = map(int, date)
+            date = list(map(int, date))
             bot.send_message(message.from_user.id, "Enter the time(if the time is not important, enter a 'no').")
         except ValueError:
             bot.send_message(message.from_user.id, "You entered the wrong format, try again.")
@@ -73,7 +73,7 @@ def text_messages(message):
             elif len(time) == 2 and time[0].lower() != 'no':
                 time.append(0)
             if time[0].lower() != 'no':
-                time = map(int, time)
+                time = list(map(int, time))
             else:
                 time = [now.hour + 3, now.minute + 1, now.second]
             bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
