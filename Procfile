@@ -1,2 +1,2 @@
 worker: python bot.py
-worker: python date.py
+worker: python reminder.py
