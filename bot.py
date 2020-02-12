@@ -30,9 +30,8 @@ def cancel_message(message):
 @bot.message_handler(commands=['reminder'])
 def reminder_message(message):
     if len(date) >= 3 and (len(time) >= 3 or time[0].lower() == "no") and not (error):
-        with open('memory.txt', 'r+') as m:
-            old_memory = m.readlines()
-            m.write("".join(old_memory) + ":" + message + ":" + bot + ":" + text + ":" + date + ":" + time + ";")
+        reminder(message, bot, text, date, time)
+        bot.send_message(message.from_user.id, "wait for a reminder.")
     else:
         bot.send_message(message.from_user.id, "You didn't enter any data.")
 
