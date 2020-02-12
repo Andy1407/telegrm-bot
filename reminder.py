@@ -2,12 +2,14 @@ import datetime
 
 
 def reminder(message, bot, text, date, time):
-
-    deadline = datetime.datetime(int(date[2]), int(date[1]), int(date[0]), int(time[0])-3, int(time[1]), int(time[2]))
-    bot.send_message(message.from_user.id, "Wait for a reminder.")
+    with open("memory") as m:
+        memory = m.readline().split(";")
 
     while True:
-        now = datetime.datetime.now()
-        if now >= deadline:
-            bot.send_message(message.from_user.id, text)
-            break
+        for i in memory:
+            deadline = datetime.datetime(int(memory[3][2]), int(memory[3][1]), int(memory[3][0]), int(memory[4][0])-3, int(memory[4][1]), int(memory[4][2]))
+            bot.send_message(message.from_user.id, "Wait for a reminder.")
+            now = datetime.datetime.now()
+            if now >= deadline:
+                memory[1].send_message(memory[0].from_user.id, text)
+                break
