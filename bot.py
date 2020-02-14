@@ -31,7 +31,7 @@ def cancel_message(message):
 def reminder_message(message):
     if len(date) >= 3 and (len(time) >= 3 or time[0].lower() == "no") and not (error):
         
-        os.system('python reminder.py')
+
         
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
