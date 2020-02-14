@@ -10,7 +10,7 @@ while True:
         memory = m.read().split(";")  
     for i in memory:
         memory1 = i.split(":")
-        if len(memory1) < 8:
+        if len(memory1) >= 8:
             now = datetime.datetime.now()
 
             deadline = datetime.datetime(int(memory1[2]), int(memory1[3]), int(memory1[4]), int(memory1[5])-3, int(memory1[6]), int(memory1[7]))
