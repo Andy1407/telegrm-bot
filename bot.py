@@ -1,6 +1,8 @@
 import telebot as tb
 import datetime
+import os
 
+os.system('python reminder.py')
 
 TOKEN = "731585587:AAFoo1xgnU7wBo92Yjwt1t-AKZFadpLFKRs"
 
