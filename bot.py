@@ -1,7 +1,6 @@
 import telebot as tb
 import datetime
 
-from reminder import reminder
 
 TOKEN = "731585587:AAFoo1xgnU7wBo92Yjwt1t-AKZFadpLFKRs"
 
@@ -30,7 +29,6 @@ def cancel_message(message):
 @bot.message_handler(commands=['reminder'])
 def reminder_message(message):
     if len(date) >= 3 and (len(time) >= 3 or time[0].lower() == "no") and not (error):
-        reminder(message, bot, text, date, time)
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
             m.write(old_memory+message.from_user.id+":"+text+":"+str(date[2])+":"+str(date[1])+":"+str(date[0])+":"+str(time[0])+":"+str(time[1])+":"+str(time[2])+";")
