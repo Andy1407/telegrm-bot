@@ -18,7 +18,10 @@ while True:
             if now >= deadline:
                 bot.send_message(int(memory1[0]), memory1[1])
 
-                with open('memory.txt', 'r+') as m:
+                with open('memory.txt') as m:
                     memory_all = m.read().split(";")
-                    memory_all.pop(memory.index(i))
-                    m.write(";".join(memory_all)
+                    
+                memory_all.pop(memory.index(i))
+                
+                with open('memory.txt', "w") as m
+                    m.write(";".join(memory_all))
