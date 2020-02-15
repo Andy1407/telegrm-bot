@@ -35,7 +35,7 @@ def reminder_message(message):
         
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
-            m.write(old_memory+message.from_user.id+":"+text+":"+str(date[2])+":"+str(date[1])+":"+str(date[0])+":"+str(time[0])+":"+str(time[1])+":"+str(time[2])+";")
+            m.write(old_memory+str(message.from_user.id)+":"+text+":"+str(date[2])+":"+str(date[1])+":"+str(date[0])+":"+str(time[0])+":"+str(time[1])+":"+str(time[2])+";")
             
         bot.send_message(message.from_user.id, "wait for a reminder.")
     else:
