@@ -16,7 +16,7 @@ while True:
             deadline = datetime.datetime(int(memory1[2]), int(memory1[3]), int(memory1[4]), int(memory1[5])-3, int(memory1[6]), int(memory1[7]))
 
             if now >= deadline:
-                bot.send_message(memory1[0], memory1[1])
+                bot.send_message(int(memory1[0]), memory1[1])
 
                 with open('memory.txt', 'r+') as m:
                     memory_all = m.read()
