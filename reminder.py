@@ -23,5 +23,5 @@ while True:
                     
                 memory_all.pop(memory.index(i))
                 
-                with open('memory.txt', "w") as m
+                with open('memory.txt', "w") as m:
                     m.write(";".join(memory_all))
