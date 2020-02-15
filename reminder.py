@@ -19,6 +19,6 @@ while True:
                 bot.send_message(int(memory1[0]), memory1[1])
 
                 with open('memory.txt', 'r+') as m:
-                    memory_all = m.read()
+                    memory_all = m.read().split(";")
                     memory_all.pop(memory.index(i))
                     m.write(memory_all)
