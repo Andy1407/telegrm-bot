@@ -24,6 +24,8 @@ def start_message(message):
 def cancel_message(message):
     global number
     bot.send_message(message.from_user.id, "The reminder is cancelled.")
+    with open("memory.txt", "w") as m:
+        m.write("")
     number = 0
 
 
