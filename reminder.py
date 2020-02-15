@@ -21,4 +21,4 @@ while True:
                 with open('memory.txt', 'r+') as m:
                     memory_all = m.read().split(";")
                     memory_all.pop(memory.index(i))
-                    m.write(";".join(memory_all))
+                    m.write(";".join(memory_all)
