@@ -59,9 +59,10 @@ def text_messages(message):
         bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). if the time is not important, enter a 'no'") #after the text
     elif number == 1:
         try:
-            date = message.text.split(".")
+            if message.text.lower() != "no":
+                date = message.text.split(".")
 
-            if len(date) < 3 and date[0].lower() != "no":
+            if len(date) < 3:
                 date.append("error")
             date = list(map(int, date))
             bot.send_message(message.from_user.id, "Enter the time(if the time is not important, enter a 'no').") # after the date
