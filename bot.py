@@ -10,7 +10,7 @@ bot = tb.TeleBot(TOKEN)
 text = " "
 number = 0
 now = datetime.datetime.now()
-date = [now.day, now.month, now.year]
+date = [now.day + 1, now.month, now.year]
 time = [now.hour + 3, now.minute + 1, now.second]
 error = False
 
@@ -56,15 +56,15 @@ def text_messages(message):
     if number == 0:
         text = message.text
         number = 1
-        bot.send_message(message.from_user.id, "Entered date.")
+        bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). if the time is not important, enter a 'no'") #after the text
     elif number == 1:
         try:
             date = message.text.split(".")
 
-            if len(date) < 3:
+            if len(date) < 3 and date[0].lower() != "no":
                 date.append("error")
             date = list(map(int, date))
-            bot.send_message(message.from_user.id, "Enter the time(if the time is not important, enter a 'no').")
+            bot.send_message(message.from_user.id, "Enter the time(if the time is not important, enter a 'no').") # after the date
         except ValueError:
             bot.send_message(message.from_user.id, "You entered the wrong format, try again.")
             error = True
