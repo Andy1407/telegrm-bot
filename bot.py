@@ -52,14 +52,12 @@ def text_messages(message):
     global error
     global now
     if message.from_user.id not in local_memory:
-        local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time,
-                                              "error": error}
+        local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
 
     if local_memory[message.from_user.id]["number"] == 0:
         local_memory[message.from_user.id]["text"] = message.text
         local_memory[message.from_user.id]["number"] = 1
-        bot.send_message(message.from_user.id,
-                         "Entered date (xx.xx.xxxx). if the time is not important, enter a 'no'")  # after the text
+        bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). if the time is not important, enter a 'no'")  # after the text
     elif local_memory[message.from_user.id]["number"] == 1:
         try:
             if message.text.lower() != "no":
