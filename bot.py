@@ -49,6 +49,7 @@ def reminder_message(message):
                         ":" + str(local_memory[message.from_user.id]["time"][0]) + 
                         ":" + str(local_memory[message.from_user.id]["time"][1]) + 
                         ":" + str(local_memory[message.from_user.id]["time"][2]) + ";")
+                bot.send_message(message.from_user.id, "wait for a reminder.")
             else:
                 bot.send_message(message.from_user.id, "there is no such date or time")
             
@@ -57,7 +58,7 @@ def reminder_message(message):
         if message.from_user.id in local_memory:
             local_memory.pop(message.from_user.id)
 
-        bot.send_message(message.from_user.id, "wait for a reminder.")
+
     else:
         bot.send_message(message.from_user.id, "You didn't enter any data.")
 
