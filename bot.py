@@ -26,17 +26,22 @@ def cancel_message(message):
     bot.send_message(message.from_user.id, "The reminder is cancelled.")
     with open("memory.txt", "w") as m:
         m.write("")
-    number = 0
+    local_memory[message.from_user.id]["number"] = 0
 
 
 @bot.message_handler(commands=['reminder'])
 def reminder_message(message):
-    if len(date) >= 3 and (len(time) >= 3 or time[0].lower() == "no") and not (error):
+    if len(local_memory[message.from_user.id]["date"]) >= 3 and (len(local_memory[message.from_user.id]["time"]) >= 3 or local_memory[message.from_user.id]["time"][0].lower() == "no") and not (local_memory[message.from_user.id]["error"]):
 
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
-            m.write(old_memory + str(message.from_user.id) + ":" + text + ":" + str(date[2]) + ":" + str(
-                date[1]) + ":" + str(date[0]) + ":" + str(time[0]) + ":" + str(time[1]) + ":" + str(time[2]) + ";")
+            m.write(old_memory + str(message.from_user.id) + ":" + local_memory[message.from_user.id]["text"] +
+                    ":" + str(local_memory[message.from_user.id]["date"][2]) + 
+                    ":" + str(local_memory[message.from_user.id]["date"][1]) + 
+                    ":" + str(local_memory[message.from_user.id]["date"][0]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][0]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][1]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][2]) + ";")
 
         bot.send_message(message.from_user.id, "wait for a reminder.")
     else:
