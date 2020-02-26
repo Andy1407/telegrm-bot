@@ -37,26 +37,23 @@ def reminder_message(message):
         local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
     
     
-    if len(local_memory[message.from_user.id]["date"]) >= 3 and (len(local_memory[message.from_user.id]["time"]) >= 3 or local_memory[message.from_user.id]["time"][0].lower() == "no") and not (local_memory[message.from_user.id]["error"]):
+    if not (local_memory[message.from_user.id]["error"]):
 
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
-            if local_memory[message.from_user.id]["date"][1] in range(1, 13) and local_memory[message.from_user.id]["date"][0] in range(1, 32) and local_memory[message.from_user.id]["time"][0] < 24 and local_memory[message.from_user.id]["time"][1] < 60 and local_memory[message.from_user.id]["time"][2] < 60:
-                m.write(old_memory + str(message.from_user.id) + ":" + local_memory[message.from_user.id]["text"] +
-                        ":" + str(local_memory[message.from_user.id]["date"][2]) + 
-                        ":" + str(local_memory[message.from_user.id]["date"][1]) + 
-                        ":" + str(local_memory[message.from_user.id]["date"][0]) + 
-                        ":" + str(local_memory[message.from_user.id]["time"][0]) + 
-                        ":" + str(local_memory[message.from_user.id]["time"][1]) + 
-                        ":" + str(local_memory[message.from_user.id]["time"][2]) + ";")
-                bot.send_message(message.from_user.id, "wait for a reminder.")
-            else:
-                bot.send_message(message.from_user.id, "there is no such date or time")
             
+            m.write(old_memory + str(message.from_user.id) + ":" + local_memory[message.from_user.id]["text"] +
+                    ":" + str(local_memory[message.from_user.id]["date"][2]) + 
+                    ":" + str(local_memory[message.from_user.id]["date"][1]) + 
+                    ":" + str(local_memory[message.from_user.id]["date"][0]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][0]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][1]) + 
+                    ":" + str(local_memory[message.from_user.id]["time"][2]) + ";")
             
-            
-        if message.from_user.id in local_memory:
-            local_memory.pop(message.from_user.id)
+        bot.send_message(message.from_user.id, "wait for a reminder.")
+              
+
+        local_memory.pop(message.from_user.id)
 
 
     else:
@@ -80,25 +77,33 @@ def text_messages(message):
         bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). If the date is not important, enter a 'no'")  # after the text
     elif local_memory[message.from_user.id]["number"] == 1:
         try:
+            local_memory[message.from_user.id]["date"] = message.text.split(".")
             if message.text.lower() != "no":
-                local_memory[message.from_user.id]["date"] = message.text.split(".")
+                local_memory[message.from_user.id]["date"] = list(map(int, local_memory[message.from_user.id]["date"]))
+            else:
+                local_memory[message.from_user.id]["date"] = [now.day + 1, now.month, now.year]
+                
 
             if len(local_memory[message.from_user.id]["date"]) < 3:
                 local_memory[message.from_user.id]["date"].append("error")
-            local_memory[message.from_user.id]["date"] = list(map(int, local_memory[message.from_user.id]["time"]))
-            bot.send_message(message.from_user.id, "Enter the time. If the time is not important, enter a 'no'.")  # after the date
+            
+            if local_memory[message.from_user.id]["date"][1] in range(1, 13) and local_memory[message.from_user.id]["date"][0] in range(1, 32):
+                bot.send_message(message.from_user.id, "Enter the time. If the time is not important, enter a 'no'.")  # after the date
+            else:
+                local_memory[message.from_user.id]["date"].append("error")
+                
+               
         except ValueError:
+            
             bot.send_message(message.from_user.id, "You entered the wrong format, try again.")
-            error = True
             local_memory[message.from_user.id]["error"] = True
         else:
             local_memory[message.from_user.id]["number"] = 2
-            local_memory[message.from_user.id]["error"]
+            local_memory[message.from_user.id]["error"] = False
 
     elif local_memory[message.from_user.id]["number"] == 2:
         try:
-            if message.text != " ":
-                local_memory[message.from_user.id]["time"] = message.text.split(":")
+            local_memory[message.from_user.id]["time"] = message.text.split(":")
 
             if len(local_memory[message.from_user.id]["time"]) < 2 and local_memory[message.from_user.id]["time"][0].lower() != 'no':
                 local_memory[message.from_user.id]["time"].append("error")
@@ -108,7 +113,10 @@ def text_messages(message):
                 local_memory[message.from_user.id]["time"] = list(map(int, local_memory[message.from_user.id]["time"]))
             else:
                 local_memory[message.from_user.id]["time"] = [now.hour, now.minute + 1, now.second]
-            bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
+            if local_memory[message.from_user.id]["time"][0] < 24 and local_memory[message.from_user.id]["time"][1] < 60 and local_memory[message.from_user.id]["time"][2] < 60:
+                bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
+            else:
+                local_memory[message.from_user.id]["time"].append("error")
         except ValueError:
             bot.send_message(message.from_user.id, "You entered the wrong format, try again.")
             local_memory[message.from_user.id]["error"] = True
