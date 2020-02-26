@@ -83,13 +83,11 @@ def text_messages(message):
             if message.text != " ":
                 local_memory[message.from_user.id]["time"] = message.text.split(":")
 
-            if len(local_memory[message.from_user.id]["time"]) < 2 and local_memory[message.from_user.id]["time"][
-                0].lower() != 'no':
+            if len(local_memory[message.from_user.id]["time"]) < 2 and local_memory[message.from_user.id]["time"][0].lower() != 'no':
                 local_memory[message.from_user.id]["time"].append("error")
-            elif len(local_memory[message.from_user.id]["time"]) == 2 and local_memory[message.from_user.id]["time"][
-                0].lower() != 'no':
+            elif len(local_memory[message.from_user.id]["time"]) == 2 and local_memory[message.from_user.id]["time"][0].lower() != 'no':
                 local_memory[message.from_user.id]["time"].append(0)
-            if time[0].lower() != 'no':
+            if local_memory[message.from_user.id]["time"][0].lower() != 'no':
                 local_memory[message.from_user.id]["time"] = list(map(int, local_memory[message.from_user.id]["time"]))
             else:
                 local_memory[message.from_user.id]["time"] = [now.hour, now.minute + 1, now.second]
