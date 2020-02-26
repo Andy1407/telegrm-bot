@@ -26,7 +26,7 @@ def cancel_message(message):
     bot.send_message(message.from_user.id, "The reminder is cancelled.")
     with open("memory.txt", "w") as m:
         m.write("")
-    local_memory[message.from_user.id]["number"] = 0
+    local_memory.pop(message.from_user.id)
 
 
 @bot.message_handler(commands=['reminder'])
@@ -42,6 +42,8 @@ def reminder_message(message):
                     ":" + str(local_memory[message.from_user.id]["time"][0]) + 
                     ":" + str(local_memory[message.from_user.id]["time"][1]) + 
                     ":" + str(local_memory[message.from_user.id]["time"][2]) + ";")
+            
+        local_memory.pop(message.from_user.id)
 
         bot.send_message(message.from_user.id, "wait for a reminder.")
     else:
