@@ -31,6 +31,11 @@ def cancel_message(message):
 
 @bot.message_handler(commands=['reminder'])
 def reminder_message(message):
+    
+    if message.from_user.id not in local_memory:
+        local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
+    
+    
     if len(local_memory[message.from_user.id]["date"]) >= 3 and (len(local_memory[message.from_user.id]["time"]) >= 3 or local_memory[message.from_user.id]["time"][0].lower() == "no") and not (local_memory[message.from_user.id]["error"]):
 
         with open('memory.txt', 'r+') as m:
