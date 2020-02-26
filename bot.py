@@ -10,7 +10,7 @@ text = " "
 number = 0
 now = datetime.datetime.now()
 date = [now.day + 1, now.month, now.year]
-time = [now.hour, now.minute + 1, now.second]
+time = [now.hour, now.minute + 4, now.second]
 error = False
 local_memory = {}
 
@@ -112,7 +112,7 @@ def text_messages(message):
             if local_memory[message.from_user.id]["time"][0].lower() != 'no':
                 local_memory[message.from_user.id]["time"] = list(map(int, local_memory[message.from_user.id]["time"]))
             else:
-                local_memory[message.from_user.id]["time"] = [now.hour, now.minute + 1, now.second]
+                local_memory[message.from_user.id]["time"] = [now.hour, now.minute + 4, now.second]
             if local_memory[message.from_user.id]["time"][0] < 24 and local_memory[message.from_user.id]["time"][1] < 60 and local_memory[message.from_user.id]["time"][2] < 60:
                 bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
             else:
