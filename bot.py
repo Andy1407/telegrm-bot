@@ -22,22 +22,45 @@ def start_message(message):
 
 @bot.message_handler(commands=['cancel'])
 def cancel_message(message):
-    global number
+    global local_memory
+    
     bot.send_message(message.from_user.id, "The reminder is cancelled.")
     with open("memory.txt", "w") as m:
         m.write("")
     if message.from_user.id in local_memory:
         local_memory.pop(message.from_user.id)
+# /back
 
 
+@bot.message_handler(commands=['back'])
+def start_message(message):
+    global local_memory
+    
+    if local_memory[message.from_user.id][number] == 0:
+        bot.send_message(message.from_user.id, "you cannot go back to the previous step")
+        
+    if local_memory[message.from_user.id][number] > 0:
+        local_memory[message.from_user.id][number] -= 1
+        
+    if local_memory[message.from_user.id][number] == 1:
+        bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). If the date is not important, enter a 'no'")
+    elif local_memory[message.from_user.id][number] == 2:
+        bot.send_message(message.from_user.id, "Enter the time. If the time is not important, enter a 'no'.")
+    elif local_memory[message.from_user.id][number] == 3:
+        bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
+    
+    bot.send_message(message.from_user.id, "repeat the action")
+
+# /reminder  
 @bot.message_handler(commands=['reminder'])
 def reminder_message(message):
+    global local_memory
     
     if message.from_user.id not in local_memory:
         local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
     
     
-    if not (local_memory[message.from_user.id]["error"]):
+    if not (local_memory[message.from_user.id]["error"]) and local_memory[message.from_user.id]["number"] == 3:
 
         with open('memory.txt', 'r+') as m:
             old_memory = m.read()
@@ -54,6 +77,8 @@ def reminder_message(message):
               
 
         local_memory.pop(message.from_user.id)
+        
+        local_memory[message.from_user.id]["number"] == 0
 
 
     else:
@@ -62,12 +87,8 @@ def reminder_message(message):
 
 @bot.message_handler(content_types=["text"])
 def text_messages(message):
-    global text
-    global date
-    global time
-    global number
-    global error
-    global now
+    global local_memory
+
     if message.from_user.id not in local_memory:
         local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
 
@@ -121,7 +142,7 @@ def text_messages(message):
             bot.send_message(message.from_user.id, "You entered the wrong format, try again.")
             local_memory[message.from_user.id]["error"] = True
         else:
-            local_memory[message.from_user.id]["number"] = 0
+            local_memory[message.from_user.id]["number"] = 3
             local_memory[message.from_user.id]["error"] = False
 
 
