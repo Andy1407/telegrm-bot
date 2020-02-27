@@ -45,14 +45,16 @@ def start_message(message):
     if local_memory[message.from_user.id]["number"] > 0:
         local_memory[message.from_user.id]["number"] -= 1
         
-    if local_memory[message.from_user.id]["number"] == 1:
+    if local_memory[message.from_user.id]["number"] == 0:
+        bot.send_message(message.from_user.id, "repeat the action")    
+    elif local_memory[message.from_user.id]["number"] == 1:
         bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). If the date is not important, enter a 'no'")
     elif local_memory[message.from_user.id]["number"] == 2:
         bot.send_message(message.from_user.id, "Enter the time. If the time is not important, enter a 'no'.")
     elif local_memory[message.from_user.id]["number"] == 3:
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
     
-    bot.send_message(message.from_user.id, "repeat the action")
+    
 
 # /reminder  
 @bot.message_handler(commands=['reminder'])
