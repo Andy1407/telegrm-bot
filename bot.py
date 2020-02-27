@@ -39,17 +39,17 @@ def start_message(message):
     if message.from_user.id not in local_memory:
         local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
     
-    if local_memory[message.from_user.id][number] == 0:
+    if local_memory[message.from_user.id]["number"] == 0:
         bot.send_message(message.from_user.id, "you cannot go back to the previous step")
         
-    if local_memory[message.from_user.id][number] > 0:
-        local_memory[message.from_user.id][number] -= 1
+    if local_memory[message.from_user.id]["number"] > 0:
+        local_memory[message.from_user.id]["number"] -= 1
         
-    if local_memory[message.from_user.id][number] == 1:
+    if local_memory[message.from_user.id]["number"] == 1:
         bot.send_message(message.from_user.id, "Entered date (xx.xx.xxxx). If the date is not important, enter a 'no'")
-    elif local_memory[message.from_user.id][number] == 2:
+    elif local_memory[message.from_user.id]["number"] == 2:
         bot.send_message(message.from_user.id, "Enter the time. If the time is not important, enter a 'no'.")
-    elif local_memory[message.from_user.id][number] == 3:
+    elif local_memory[message.from_user.id]["number"] == 3:
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
     
     bot.send_message(message.from_user.id, "repeat the action")
