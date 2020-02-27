@@ -36,6 +36,9 @@ def cancel_message(message):
 def start_message(message):
     global local_memory
     
+    if message.from_user.id not in local_memory:
+        local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
+    
     if local_memory[message.from_user.id][number] == 0:
         bot.send_message(message.from_user.id, "you cannot go back to the previous step")
         
