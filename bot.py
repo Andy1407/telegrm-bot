@@ -93,7 +93,8 @@ def reminder_message(message):
 @bot.message_handler(content_types=["text"])
 def text_messages(message):
     global local_memory
-
+    if message.text == "hello":
+        bot.send_message(message.from_user.id, "1234567890")
     if message.from_user.id not in local_memory:
         local_memory[message.from_user.id] = {"number": number, "text": text, "date": date, "time": time, "error": error}
 
