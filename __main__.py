@@ -3,7 +3,7 @@ from threading import Thread
 from bot import bot
 import reminder
 
-print(2)
+
 def main():
     TOKEN = "731585587:AAFoo1xgnU7wBo92Yjwt1t-AKZFadpLFKRs"
 
