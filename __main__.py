@@ -19,5 +19,4 @@ def main():
     tread_reminder.join()
 
 
-if __name__ == '__main__':
-    main()
+main()
