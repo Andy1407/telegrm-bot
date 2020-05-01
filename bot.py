@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from telebot.types import ReplyKeyboardRemove, Message, PhotoSize
+from telebot.types import ReplyKeyboardRemove
 
 import telegramcalendar
 
