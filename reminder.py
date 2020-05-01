@@ -4,7 +4,6 @@ from type import send
 
 def reminder(bot):
     while True:
-        print(1)
         from bot import base_memory
         delete_list = []
         for user in base_memory:
