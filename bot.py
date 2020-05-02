@@ -6,7 +6,7 @@ import telegramcalendar
 
 base_memory = {}
 
-
+print(1)
 def bot(bot):
     global base_memory
 
