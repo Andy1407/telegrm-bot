@@ -1,1 +1,1 @@
-Procfile: worker: python3 __main__.py
+Worker: python3 __main__.py
