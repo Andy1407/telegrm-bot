@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from telebot.types import ReplyKeyboardRemove
+from telebot.types import ReplyKeyboardRemove, Message, PhotoSize
 
 import telegramcalendar
 
@@ -57,7 +57,7 @@ def bot(bot):
 
         selected, date2 = telegramcalendar.process_calendar_selection(bot, call)
         if selected:
-            local_memory[call.message.chat.id]["date"].append(date2 + timedelta(minutes=2))
+            local_memory[call.message.chat.id]["date"].append(date2)
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d/%m/%Y")),
                              reply_markup=ReplyKeyboardRemove())
         base_memory = local_memory.copy()
