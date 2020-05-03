@@ -55,9 +55,9 @@ def bot(bot):
         if call.message.chat.id not in local_memory:
             local_memory[call.message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
 
-        selected, date2 = telegramcalendar.process_calendar_selection(bot, call)
+        selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call)
         if selected:
-            local_memory[call.message.chat.id]["date"].append(date2)
+            local_memory[call.message.chat.id]["date"].append(time_sending)
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d/%m/%Y")),
                              reply_markup=ReplyKeyboardRemove())
         base_memory = local_memory.copy()
