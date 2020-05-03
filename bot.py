@@ -37,8 +37,8 @@ def bot(bot):
             bot.send_message(message.from_user.id, f"Your timezone is {timezone}.")
 
         else:
-            bot.send_message(message.from_user.id, "You didn't send your location")
-            set_timezone(message)
+            msg = bot.send_message(message.from_user.id, "You didn't send your location")
+            bot.register_next_step_handler(msg, set_timezone)
 
     @bot.message_handler(commands=['cancel_last'])
     def cancel_last_message(message):
