@@ -72,7 +72,7 @@ def process_calendar_selection(bot, message):
     :return: Returns a tuple (Boolean,datetime.datetime), indicating if a date is selected
                 and returning the date if so.
     """
-    ret_data = (False, None)
+    ret_data = (False, None, None)
     query = message
     (action, year, month, day) = separate_callback_data(message.data)
     curr = datetime.datetime(int(year), int(month), 1)
