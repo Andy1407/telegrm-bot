@@ -11,6 +11,7 @@ import calendar
 import datetime
 
 from telebot import types
+from bot import timezone_list
 
 
 def create_callback_data(action, year, month, day):
@@ -73,21 +74,27 @@ def process_calendar_selection(bot, message):
                 and returning the date if so.
     """
     ret_data = (False, None, None)
-    query = message
     (action, year, month, day) = separate_callback_data(message.data)
     curr = datetime.datetime(int(year), int(month), 1)
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=message.id)
     elif action == "DAY":
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=timezone_list[message.message.chat.id]).replace(tzinfo=None)
         bot.edit_message_text(text=message.message.text,
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id)
-        ret_data = True,datetime.datetime(int(year), int(month), int(day)), []
-        ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 8, 30))
-        ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 12))
-        ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 15, 30))
-        ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 20))
+        ret_data = [True, datetime.datetime(int(year), int(month), int(day)), []]
+        if now < datetime.datetime(int(year), int(month), int(day), 8, 30):
+            ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 8, 30))
+        if now < datetime.datetime(int(year), int(month), int(day), 12):
+            ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 12))
+        if now < datetime.datetime(int(year), int(month), int(day), 15, 30):
+            ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 15, 30))
+        if now < datetime.datetime(int(year), int(month), int(day), 20):
+            ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 20))
+        else:
+            bot.send_message(message.message.chat.id, "I cannot set this date.")
+            ret_data[0] = False
     elif action == "PREV-MONTH":
         pre = curr - datetime.timedelta(days=1)
         bot.edit_message_text(text=message.message.text,
@@ -101,6 +108,6 @@ def process_calendar_selection(bot, message):
                               message_id=message.message.message_id,
                               reply_markup=create_calendar(int(ne.year), int(ne.month)))
     else:
-        bot.answer_callback_query(callback_query_id=query.id, text="Something went wrong!")
+        bot.answer_callback_query(callback_query_id=message.id, text="Something went wrong!")
         # UNKNOWN
     return ret_data
