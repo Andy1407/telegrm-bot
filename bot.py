@@ -27,13 +27,14 @@ def bot(bot):
         msg = bot.send_message(message.from_user.id, 'please send your location')
         bot.register_next_step_handler(msg, set_timezone)
 
+    @bot.message_handler(content_types=["location"])
     def set_timezone(message):
         global timezone_list
         if message.content_type == "location":
             tf = TimezoneFinder()
             timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
             timezone_list[message.chat.id] = pytz.timezone(timezone)
-            bot.send_message(message.from_user.id, "Your location was set.")
+            bot.send_message(message.from_user.id, f"Your timezone is {timezone}.")
 
         else:
             bot.send_message(message.from_user.id, "You didn't send your location")
