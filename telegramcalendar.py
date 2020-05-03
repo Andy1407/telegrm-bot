@@ -83,7 +83,11 @@ def process_calendar_selection(bot, message):
         bot.edit_message_text(text=message.message.text,
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id)
-        ret_data = True, datetime.datetime(int(year), int(month), int(day), now.hour, now.minute)
+        ret_data = True, []
+        ret_data[1].append(datetime.datetime(int(year), int(month), int(day), 8, 30))
+        ret_data[1].append(datetime.datetime(int(year), int(month), int(day), 12))
+        ret_data[1].append(datetime.datetime(int(year), int(month), int(day), 15, 30))
+        ret_data[1].append(datetime.datetime(int(year), int(month), int(day), 20))
     elif action == "PREV-MONTH":
         pre = curr - datetime.timedelta(days=1)
         bot.edit_message_text(text=message.message.text,
