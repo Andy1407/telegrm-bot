@@ -1,17 +1,19 @@
 import datetime
+import pytz
+
 from type import send
 
 
 def reminder(bot):
     while True:
-        from bot import base_memory
+        from bot import base_memory, timezone_list
         delete_list = []
         for user in base_memory:
             for index in range(len(base_memory[user]["date"])):
-                now = datetime.datetime.now() + datetime.timedelta(hours=3)
+                now = datetime.datetime.now(tz=timezone_list[user])
                 for i in range(len(base_memory[user]["date"][index])):
-                    deadline = base_memory[user]["date"][index][i]
-                    if now >= deadline:
+                    deadline = base_memory[user]["date"][index][i].astimezone(pytz.timezone(timezone_list[user]))
+                    if now.replace(tzinfo=None) >= deadline.replace(tzinfo=None):
                         send(bot, user, base_memory[user]["messages"][index])
                         delete_list.append([user, index, i])
         for i in delete_list:
