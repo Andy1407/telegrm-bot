@@ -16,7 +16,7 @@ def reminder(bot):
                         delete_list.append([user, index, i])
         for i in delete_list:
 
-            base_memory[i[0]]["date"][i[2]].pop(i[1])
+            base_memory[i[0]]["date"][i[1]].pop(i[2])
             if not base_memory[i[0]]["date"]:
                 base_memory[i[0]]["date"].pop(i[1])
                 base_memory[i[0]]["messages"].pop(i[1])
