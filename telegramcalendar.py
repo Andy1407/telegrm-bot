@@ -79,10 +79,11 @@ def process_calendar_selection(bot, message):
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=message.id)
     elif action == "DAY":
+        now = datetime.datetime.now()
         bot.edit_message_text(text=message.message.text,
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id)
-        ret_data = True, datetime.datetime(int(year), int(month), int(day))
+        ret_data = True, datetime.datetime(int(year), int(month), int(day), now.hour, now.minute)
     elif action == "PREV-MONTH":
         pre = curr - datetime.timedelta(days=1)
         bot.edit_message_text(text=message.message.text,
