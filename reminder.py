@@ -8,7 +8,7 @@ def reminder(bot):
         delete_list = []
         for user in base_memory:
             for index in range(len(base_memory[user]["date"])):
-                now = datetime.datetime.now()
+                now = datetime.datetime.now() + datetime.timedelta(hours=3)
                 for i in range(len(base_memory[user]["date"][index])):
                     deadline = base_memory[user]["date"][index][i]
                     if now >= deadline:
