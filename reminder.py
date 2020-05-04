@@ -7,7 +7,6 @@ def reminder(bot):
     while True:
         from bot import base_memory, timezone_list
         delete_list = []
-        print(base_memory)
         for user in base_memory:
 
             for index in range(len(base_memory[user]["date"])):
