@@ -1,6 +1,5 @@
-from telebot.types import ReplyKeyboardRemove
-
 import pytz
+from telebot.types import ReplyKeyboardRemove
 from timezonefinder import TimezoneFinder
 
 import telegramcalendar
@@ -20,6 +19,8 @@ def bot(bot):
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
+        if message.chat.id not in timezone_list:
+            timezone_list[message.chat.id] = timezone
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
 
     @bot.message_handler(commands=['timezone'])
@@ -27,7 +28,6 @@ def bot(bot):
         msg = bot.send_message(message.from_user.id, 'please send your location')
         bot.register_next_step_handler(msg, set_timezone)
 
-    @bot.message_handler(content_types=["location"])
     def set_timezone(message):
         global timezone_list
         if message.content_type == "location":
