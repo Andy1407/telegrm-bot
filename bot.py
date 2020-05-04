@@ -15,12 +15,12 @@ def bot(bot):
     local_memory = {}
     messages = []
     date = []
-    timezone = pytz.timezone("UTC")
+    d_timezone = pytz.timezone("UTC")
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
         if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = timezone
+            timezone_list[message.chat.id] = d_timezone
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
 
     @bot.message_handler(commands=['timezone'])
@@ -62,7 +62,7 @@ def bot(bot):
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
         if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = timezone
+            timezone_list[message.chat.id] = d_timezone
 
         msg = bot.send_message(message.from_user.id, 'please enter the message')
         bot.register_next_step_handler(msg, text_messages)
@@ -72,7 +72,7 @@ def bot(bot):
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
         if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = timezone
+            timezone_list[message.chat.id] = d_timezone
         local_memory[message.chat.id]["messages"].append(message)
         bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
 
@@ -83,7 +83,7 @@ def bot(bot):
         if call.message.chat.id not in local_memory:
             local_memory[call.message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
         if call.message.chat.id not in timezone_list:
-            timezone_list[call.message.chat.id] = timezone
+            timezone_list[call.message.chat.id] = d_timezone
 
         selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call)
         if selected:
