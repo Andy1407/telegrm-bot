@@ -15,7 +15,7 @@ def bot(bot):
     local_memory = {}
     messages = []
     date = []
-    timezone = None
+    timezone = pytz.timezone("UTC")
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
