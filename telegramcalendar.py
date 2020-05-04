@@ -79,7 +79,8 @@ def process_calendar_selection(bot, message):
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=message.id)
     elif action == "DAY":
-        now = datetime.datetime.now(tz=b.timezone_list[message.message.chat.id]).replace(tzinfo=None)
+        now = datetime.datetime.now(tz=b.timezone_list[message.message.chat.id])
+        now = now.replace(tzinfo=None)
         bot.edit_message_text(text=message.message.text,
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id)
