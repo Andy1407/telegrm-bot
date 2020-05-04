@@ -9,6 +9,7 @@ def reminder(bot):
         delete_list = []
         print(base_memory)
         for user in base_memory:
+
             for index in range(len(base_memory[user]["date"])):
                 now = datetime.datetime.now(tz=timezone_list[user])
                 for i in range(len(base_memory[user]["date"][index])):
