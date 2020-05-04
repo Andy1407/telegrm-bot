@@ -1,7 +1,5 @@
 import datetime
 
-import pytz
-
 from type import send
 
 
@@ -13,9 +11,9 @@ def reminder(bot):
         for user in base_memory:
 
             for index in range(len(base_memory[user]["date"])):
-                now = datetime.datetime.now(tz=pytz.timezone(timezone_list[user]))
+                now = datetime.datetime.now(tz=timezone_list[user])
                 for i in range(len(base_memory[user]["date"][index])):
-                    deadline = base_memory[user]["date"][index][i].astimezone(pytz.timezone(timezone_list[user]))
+                    deadline = base_memory[user]["date"][index][i].astimezone(timezone_list[user])
                     if now.replace(tzinfo=None) >= deadline.replace(tzinfo=None):
                         send(bot, user, base_memory[user]["messages"][index])
                         delete_list.append([user, index, i])
