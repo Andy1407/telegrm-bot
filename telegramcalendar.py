@@ -94,7 +94,8 @@ def process_calendar_selection(bot, message):
         if now < datetime.datetime(int(year), int(month), int(day), 20):
             ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 20))
         else:
-            bot.send_message(message.message.chat.id, "I cannot set this date.")
+            bot.send_message(message.message.chat.id, "I cannot set this date.",
+                             reply_markup=create_calendar(int(year), int(month)))
             ret_data[0] = False
     elif action == "PREV-MONTH":
         pre = curr - datetime.timedelta(days=1)
