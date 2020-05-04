@@ -1,4 +1,3 @@
-import pytz
 from telebot.types import ReplyKeyboardRemove
 from timezonefinder import TimezoneFinder
 
@@ -15,7 +14,7 @@ def bot(bot):
     local_memory = {}
     messages = []
     date = []
-    timezone = pytz.timezone("UTC")
+    timezone = "UTC"
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
@@ -33,7 +32,7 @@ def bot(bot):
         if message.content_type == "location":
             tf = TimezoneFinder()
             timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
-            timezone_list[message.chat.id] = pytz.timezone(timezone)
+            timezone_list[message.chat.id] = timezone
             bot.send_message(message.from_user.id, f"Your timezone is {timezone}.")
 
         else:
