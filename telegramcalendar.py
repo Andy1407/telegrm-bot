@@ -10,7 +10,6 @@ Base methods for calendar keyboard creation and processing.
 import calendar
 import datetime
 
-import pytz
 from telebot import types
 
 import bot as b
@@ -81,7 +80,7 @@ def process_calendar_selection(bot, message):
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=message.id)
     elif action == "DAY":
-        now = datetime.datetime.now(tz=pytz.timezone(b.timezone_list[message.message.chat.id])).replace(tzinfo=None)
+        now = datetime.datetime.now(tz=b.timezone_list[message.message.chat.id]).replace(tzinfo=None)
         bot.edit_message_text(text=message.message.text,
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id)

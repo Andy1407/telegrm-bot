@@ -8,6 +8,7 @@ from type import send
 def reminder(bot):
     while True:
         from bot import base_memory, timezone_list
+        print(timezone_list)
         delete_list = []
         for user in base_memory:
 
