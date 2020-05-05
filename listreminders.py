@@ -35,19 +35,19 @@ def create_list(messages, date):
     return list_reminders
 
 
-def option(i):
+def option(index, reminder):
     list_reminders = InlineKeyboardMarkup()
-    list_reminders.add(InlineKeyboardButton("edit", callback_data=f"EDIT;{i}"))
-    list_reminders.add(InlineKeyboardButton("delete", callback_data=f"DELETE;{i}"))
-    list_reminders.add(InlineKeyboardButton("cancel", callback_data="CANCEL"))
+    list_reminders.add(InlineKeyboardButton("edit", callback_data=f"EDIT;{index};{reminder}"))
+    list_reminders.add(InlineKeyboardButton("delete", callback_data=f"DELETE;{index};{reminder}"))
+    list_reminders.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index};{reminder}"))
     return list_reminders
 
 
-def edit(index, reminder):
+def edit(index):
     edit_list = InlineKeyboardMarkup()
-    edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{index};{reminder}"))
-    edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{index};{reminder}"))
-    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index};{reminder}"))
+    edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{index}"))
+    edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{index}"))
+    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index}"))
     return edit_list
 
 
