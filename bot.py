@@ -28,6 +28,8 @@ def bot(bot):
         if message_id in base_memory:
             base_memory[message_id]["messages"].pop(int(index))
             base_memory[message_id]["date"].pop(int(index))
+            if not base_memory[message_id]["messages"]:
+                base_memory.pop(message_id)
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
@@ -124,7 +126,8 @@ def bot(bot):
         """list of reminders click handler"""
         listreminders.process_reminder_selection(bot, call)
 
-    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
+    @bot.callback_query_handler(
+        func=lambda call: len(call.data.split(";")) == 3 and call.data.split(";")[0] in option_list)
     def option_menu(call):
         """option button click handler"""
         global base_memory
@@ -141,7 +144,8 @@ def bot(bot):
         global editText
         action, index = call.data.split(";")
         local_memory[call.message.chat.id]["date"].append(local_memory[call.message.chat.id]["date"][int(index)])
-        local_memory[call.message.chat.id]["messages"].append(local_memory[call.message.chat.id]["messages"][int(index)])
+        local_memory[call.message.chat.id]["messages"].append(
+            local_memory[call.message.chat.id]["messages"][int(index)])
         delete(call.message.chat.id, index)
 
         if action == "EDIT_TEXT":
