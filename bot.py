@@ -125,10 +125,10 @@ def bot(bot):
         listreminders.process_reminder_selection(bot, call)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
-    def edit_menu(call):
-        """edit button click handler"""
+    def option_menu(call):
+        """option button click handler"""
         global base_memory
-        action, index = call.data.split(";")
+        action, index, reminder = call.data.split(";")
         if action == "DELETE":
             delete(call.message.chat.id, index)
             bot.send_message(chat_id=call.message.chat.id, text="message was delete")
