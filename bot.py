@@ -14,6 +14,7 @@ def bot(bot):
     local_memory = {}
     messages = []
     date = []
+    calendar_data = ["IGNORE", "DAY", "PREV-MONTH", "NEXT-MONTH"]
     d_timezone = pytz.timezone("UTC")
 
     @bot.message_handler(commands=['start'])
@@ -75,9 +76,7 @@ def bot(bot):
         local_memory[message.chat.id]["messages"].append(message)
         bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
 
-    @bot.callback_query_handler(func=lambda
-            call: call.data.split(";")[0] == "IGNORE" or call.data.split(";")[0] == "DAY" or call.data.split(";")[
-        0] == "PREV-MONTH" or call.data.split(";")[0] == "NEXT-MONTH")
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in calendar_data)
     def callback_query(call):
         global base_memory
         global timezone_list
