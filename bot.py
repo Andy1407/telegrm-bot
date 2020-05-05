@@ -23,6 +23,7 @@ def bot(bot):
     d_timezone = pytz.timezone("UTC")
 
     def delete(message_id, index):
+        """delete message"""
         global base_memory
         if message_id in base_memory:
             base_memory[message_id]["messages"].pop(int(index))
@@ -74,7 +75,8 @@ def bot(bot):
             base_memory.pop(message.chat.id)
 
     @bot.message_handler(commands=['reminder'])
-    def reminder_message(message):
+    def reminder_handler(message):
+        """reminder handler"""
         global base_memory
         global timezone_list
         if message.chat.id not in local_memory:
@@ -83,23 +85,26 @@ def bot(bot):
             timezone_list[message.chat.id] = d_timezone
 
         msg = bot.send_message(message.from_user.id, 'please enter the message')
-        bot.register_next_step_handler(msg, text_messages)
+        bot.register_next_step_handler(msg, message_handler)
 
-    def text_messages(message):
+    def message_handler(message):
+        """message handler"""
         global timezone_list
         global editText
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
         if message.chat.id not in timezone_list:
             timezone_list[message.chat.id] = d_timezone
-
         local_memory[message.chat.id]["messages"].append(message)
         if not editText:
             bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
+        else:
+            bot.send_message(message.from_user.id, "reminder was edited")
         editText = False
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in calendar_data)
     def callback_query(call):
+        """calendar button click handler"""
         global base_memory
         global timezone_list
         if call.message.chat.id not in local_memory:
@@ -116,10 +121,12 @@ def bot(bot):
 
     @bot.callback_query_handler(func=lambda call: len(call.data.split(";")) == 3 and call.data.split(";")[2] == "list")
     def reminder_list(call):
+        """list of reminders click handler"""
         listreminders.process_reminder_selection(bot, call)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
     def edit_menu(call):
+        """edit button click handler"""
         global base_memory
         action, index = call.data.split(";")
         if action == "DELETE":
@@ -142,7 +149,7 @@ def bot(bot):
             local_memory[call.message.chat.id]["messages"].pop()
             editText = True
             msg = bot.send_message(call.message.chat.id, 'please enter the message')
-            bot.register_next_step_handler(msg, text_messages)
+            bot.register_next_step_handler(msg, message_handler)
 
         elif action == "EDIT_DATE":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)

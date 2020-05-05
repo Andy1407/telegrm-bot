@@ -43,11 +43,11 @@ def option(i):
     return list_reminders
 
 
-def edit(i):
+def edit(index, reminder):
     edit_list = InlineKeyboardMarkup()
-    edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{i}"))
-    edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{i}"))
-    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{i}"))
+    edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{index};{reminder}"))
+    edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{index};{reminder}"))
+    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index};{reminder}"))
     return edit_list
 
 
@@ -58,17 +58,17 @@ def process_reminder_selection(bot, message):
         bot.edit_message_text(text=message.data.split(";")[0],
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
-                              reply_markup=option(message.data.split(";")[1]))
+                              reply_markup=option(message.data.split(";")[1], message.data.split(";")[0]))
 
 
 def process_option_selection(bot, message):
-    action, i = message.data.split(";")
+    action, index, reminder = message.data.split(";")
     if action == "CANCEL":
         bot.delete_message(chat_id=message.message.chat.id, message_id=message.message.message_id)
     elif action == "EDIT":
-        bot.edit_message_text(text="edit the text:",
+        bot.edit_message_text(text=f"edit the message({reminder}):",
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
-                              reply_markup=edit(i))
+                              reply_markup=edit(index))
     else:
         bot.answer_callback_query(callback_query_id=message.id, text="Something went wrong!")
