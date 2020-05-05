@@ -62,6 +62,8 @@ def create_calendar(year=None, month=None):
     keyboard.row(types.InlineKeyboardButton("<", callback_data=create_callback_data("PREV-MONTH", year, month, day)),
                  types.InlineKeyboardButton(" ", callback_data=data_ignore),
                  types.InlineKeyboardButton(">", callback_data=create_callback_data("NEXT-MONTH", year, month, day)))
+
+    keyboard.row(types.InlineKeyboardButton("cancel", callback_data="CANCEL"))
     return keyboard
 
 
@@ -109,6 +111,11 @@ def process_calendar_selection(bot, message):
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
                               reply_markup=create_calendar(int(ne.year), int(ne.month)))
+    elif action == "CANCEL":
+        bot.edit_message_text(text="reminder was cancel",
+                              chat_id=message.message.chat.id,
+                              message_id=message.message.message_id,
+                              reply_markup=types.ReplyKeyboardRemove())
     else:
         bot.answer_callback_query(callback_query_id=message.id, text="Something went wrong!")
         # UNKNOWN
