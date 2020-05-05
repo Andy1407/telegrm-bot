@@ -1,34 +1,59 @@
 import pytz
-from telebot.types import ReplyKeyboardRemove
 from timezonefinder import TimezoneFinder
 
+import listreminders
 import telegramcalendar
 
 base_memory = {}
 timezone_list = {}
+editText = False
 
 
 def bot(bot):
+    global editText
     global timezone_list
     global base_memory
     local_memory = {}
     messages = []
     date = []
     calendar_data = ["IGNORE", "DAY", "PREV-MONTH", "NEXT-MONTH"]
+    option_list = ["CANCEL", "EDIT", "DELETE"]
+    edit_list = ["EDIT_TEXT", "EDIT_DATE"]
+
     d_timezone = pytz.timezone("UTC")
+
+    def delete(message_id, index):
+        global base_memory
+        if message_id in base_memory:
+            base_memory[message_id]["messages"].pop(int(index))
+            base_memory[message_id]["date"].pop(int(index))
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
+        """the start message"""
         if message.chat.id not in timezone_list:
             timezone_list[message.chat.id] = d_timezone
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
 
+    @bot.message_handler(commands=['remind_list'])
+    def remind_list(message):
+        """menu for managing reminders"""
+        global base_memory
+        if message.chat.id in base_memory:
+            bot.send_message(message.from_user.id, "please select reminder:",
+                             reply_markup=listreminders.create_list(base_memory[message.chat.id]["messages"],
+                                                                    base_memory[message.chat.id]["date"]))
+        else:
+            bot.send_message(message.from_user.id, "You haven't reminder")
+
     @bot.message_handler(commands=['timezone'])
     def timezone(message):
+        """send message about setting the timezone"""
         msg = bot.send_message(message.from_user.id, 'please send your location')
         bot.register_next_step_handler(msg, set_timezone)
 
     def set_timezone(message):
+        """setting the timezone"""
         global timezone_list
         if message.content_type == "location":
             tf = TimezoneFinder()
@@ -40,16 +65,9 @@ def bot(bot):
             msg = bot.send_message(message.from_user.id, "You didn't send your location")
             bot.register_next_step_handler(msg, set_timezone)
 
-    @bot.message_handler(commands=['cancel_last'])
-    def cancel_last_message(message):
-        global base_memory
-        bot.send_message(message.from_user.id, "Last reminder was cancelled.")
-        if message.from_user.id in base_memory:
-            base_memory[message.from_user.id]["messages"].pop()
-            base_memory[message.from_user.id]["date"].pop()
-
     @bot.message_handler(commands=['cancel_all'])
     def cancel_all_message(message):
+        """cancel all reminder"""
         global base_memory
         bot.send_message(message.from_user.id, "All reminders were cancelled.")
         if message.chat.id in local_memory:
@@ -69,12 +87,16 @@ def bot(bot):
 
     def text_messages(message):
         global timezone_list
+        global editText
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
         if message.chat.id not in timezone_list:
             timezone_list[message.chat.id] = d_timezone
+
         local_memory[message.chat.id]["messages"].append(message)
-        bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
+        if not editText:
+            bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
+        editText = False
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in calendar_data)
     def callback_query(call):
@@ -86,10 +108,47 @@ def bot(bot):
             timezone_list[call.message.chat.id] = d_timezone
 
         selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call)
+
         if selected:
             local_memory[call.message.chat.id]["date"].append(time_sending)
-            bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d/%m/%Y")),
-                             reply_markup=ReplyKeyboardRemove())
-        base_memory = local_memory.copy()
+            bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d.%m.%Y")))
+            base_memory = local_memory.copy()
+
+    @bot.callback_query_handler(func=lambda call: len(call.data.split(";")) == 3 and call.data.split(";")[2] == "list")
+    def reminder_list(call):
+        listreminders.process_reminder_selection(bot, call)
+
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
+    def edit_menu(call):
+        global base_memory
+        action, index = call.data.split(";")
+        if action == "DELETE":
+            delete(call.message.chat.id, index)
+            bot.send_message(chat_id=call.message.chat.id, text="message was delete")
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        else:
+            listreminders.process_option_selection(bot, call)
+
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in edit_list)
+    def edit(call):
+        global editText
+        action, index = call.data.split(";")
+        local_memory[call.message.chat.id]["date"].append(local_memory[call.message.chat.id]["date"][int(index)])
+        local_memory[call.message.chat.id]["messages"].append(local_memory[call.message.chat.id]["messages"][int(index)])
+        delete(call.message.chat.id, index)
+
+        if action == "EDIT_TEXT":
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            local_memory[call.message.chat.id]["messages"].pop()
+            editText = True
+            msg = bot.send_message(call.message.chat.id, 'please enter the message')
+            bot.register_next_step_handler(msg, text_messages)
+
+        elif action == "EDIT_DATE":
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            local_memory[call.message.chat.id]["date"].pop()
+            bot.send_message(call.message.chat.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
+        elif action == "CANCEL":
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
     bot.polling(none_stop=True, interval=0)

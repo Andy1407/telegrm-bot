@@ -62,8 +62,6 @@ def create_calendar(year=None, month=None):
     keyboard.row(types.InlineKeyboardButton("<", callback_data=create_callback_data("PREV-MONTH", year, month, day)),
                  types.InlineKeyboardButton(" ", callback_data=data_ignore),
                  types.InlineKeyboardButton(">", callback_data=create_callback_data("NEXT-MONTH", year, month, day)))
-
-    keyboard.row(types.InlineKeyboardButton("cancel", callback_data="CANCEL"))
     return keyboard
 
 
@@ -77,15 +75,17 @@ def process_calendar_selection(bot, message):
                 and returning the date if so.
     """
     ret_data = (False, None, None)
+
     (action, year, month, day) = separate_callback_data(message.data)
     curr = datetime.datetime(int(year), int(month), 1)
+
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=message.id)
     elif action == "DAY":
         now = datetime.datetime.now(tz=b.timezone_list[message.message.chat.id]).replace(tzinfo=None)
-        bot.edit_message_text(text=message.message.text,
-                              chat_id=message.message.chat.id,
-                              message_id=message.message.message_id)
+        bot.delete_message(
+            chat_id=message.message.chat.id,
+            message_id=message.message.message_id)
         ret_data = [True, datetime.datetime(int(year), int(month), int(day)), []]
         if now < datetime.datetime(int(year), int(month), int(day), 8, 30):
             ret_data[2].append(datetime.datetime(int(year), int(month), int(day), 8, 30))
@@ -111,11 +111,6 @@ def process_calendar_selection(bot, message):
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
                               reply_markup=create_calendar(int(ne.year), int(ne.month)))
-    elif action == "CANCEL":
-        bot.send_message(
-            chat_id=message.message.chat.id,
-            text="reminder was cancel",
-            reply_markup=types.ReplyKeyboardRemove())
     else:
         bot.answer_callback_query(callback_query_id=message.id, text="Something went wrong!")
         # UNKNOWN
