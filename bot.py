@@ -76,7 +76,8 @@ def bot(bot):
         bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
 
     @bot.callback_query_handler(func=lambda
-            call: call.data == "IGNORE" or call.data == "DAY" or call.data == "PREV-MONTH" or call.data == "NEXT-MONTH")
+            call: call.data.split(";")[0] == "IGNORE" or call.data.split(";")[0] == "DAY" or call.data.split(";")[
+        0] == "PREV-MONTH" or call.data.split(";")[0] == "NEXT-MONTH")
     def callback_query(call):
         global base_memory
         global timezone_list
