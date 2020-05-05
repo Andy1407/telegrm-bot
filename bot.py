@@ -11,7 +11,6 @@ timezone_list = {}
 def bot(bot):
     global timezone_list
     global base_memory
-
     local_memory = {}
     messages = []
     date = []
@@ -76,7 +75,8 @@ def bot(bot):
         local_memory[message.chat.id]["messages"].append(message)
         bot.send_message(message.from_user.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
 
-    @bot.callback_query_handler(func=lambda call: True)
+    @bot.callback_query_handler(func=lambda
+            call: call.data == "IGNORE" or call.data == "DAY" or call.data == "PREV-MONTH" or call.data == "NEXT-MONTH")
     def callback_query(call):
         global base_memory
         global timezone_list
@@ -91,4 +91,5 @@ def bot(bot):
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d/%m/%Y")),
                              reply_markup=ReplyKeyboardRemove())
         base_memory = local_memory.copy()
+
     bot.polling(none_stop=True, interval=0)
