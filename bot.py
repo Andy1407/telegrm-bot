@@ -126,8 +126,7 @@ def bot(bot):
         """list of reminders click handler"""
         listreminders.process_reminder_selection(bot, call)
 
-    @bot.callback_query_handler(
-        func=lambda call: len(call.data.split(";")) == 3 and call.data.split(";")[0] in option_list)
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
     def option_menu(call):
         """option button click handler"""
         global base_memory

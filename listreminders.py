@@ -47,7 +47,7 @@ def edit(index):
     edit_list = InlineKeyboardMarkup()
     edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{index}"))
     edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{index}"))
-    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index}"))
+    edit_list.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;{index};1970"))
     return edit_list
 
 
