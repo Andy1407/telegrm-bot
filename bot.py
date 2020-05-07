@@ -5,6 +5,7 @@ from timezonefinder import TimezoneFinder
 
 import listreminders
 import telegramcalendar
+from formatdate import FormatDate
 
 base_memory = {}
 timezone_list = {}
@@ -48,7 +49,8 @@ def bot(bot):
             timezone_list[message.chat.id] = d_timezone
 
         bot.send_message(message.from_user.id,
-                         str(datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None)))
+                         FormatDate(datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None),
+                                    "%D.%M.%Y %h:%m:%s"))
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
