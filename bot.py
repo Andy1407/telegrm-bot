@@ -43,6 +43,10 @@ def bot(bot):
     @bot.message_handler(commands=['now'])
     def now(message):
         global timezone_list
+
+        if message.chat.id not in timezone_list:
+            timezone_list[message.chat.id] = d_timezone
+
         bot.send_message(message.from_user.id,
                          str(datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None)))
 
