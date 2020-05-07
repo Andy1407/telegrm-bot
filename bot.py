@@ -1,3 +1,5 @@
+import datetime
+
 import pytz
 from timezonefinder import TimezoneFinder
 
@@ -37,6 +39,12 @@ def bot(bot):
         if message.chat.id not in timezone_list:
             timezone_list[message.chat.id] = d_timezone
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
+
+    @bot.message_handler(commands=['now'])
+    def now(message):
+        global timezone_list
+        bot.send_message(message.from_user.id,
+                         str(datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None)))
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
