@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 
 import pytz
 from timezonefinder import TimezoneFinder
@@ -197,8 +198,8 @@ def bot(bot):
                              reply_markup=telegramcalendar.create_calendar())
         elif action == "CANCEL":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
-    try:
-        bot.polling(none_stop=True, interval=0)
-    except Exception:
-        time.sleep(5)
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=0)
+        except Exception:
+            time.sleep(5)
