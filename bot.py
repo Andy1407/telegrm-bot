@@ -1,6 +1,5 @@
 import datetime
 import logging
-import traceback
 
 import pytz
 from timezonefinder import TimezoneFinder
@@ -202,5 +201,4 @@ def bot(bot):
     try:
         bot.polling(none_stop=True, interval=0)
     except Exception:
-        for i in message_about_error:
-            bot.send_message(i, f"error: \n {traceback.format_exc()}")
+        pass
