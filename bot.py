@@ -1,4 +1,5 @@
 import datetime
+import logging
 import traceback
 
 import pytz
@@ -34,6 +35,9 @@ def bot(bot):
     edit_list = ["EDIT_TEXT", "EDIT_DATE"]
 
     d_timezone = pytz.timezone("UTC")
+    logging.basicConfig(filename="mySnake.log",
+                        format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                        level=logging.DEBUG)
 
     def delete(message_id, index):
         """delete message"""
@@ -62,7 +66,6 @@ def bot(bot):
                          FormatDate(
                              datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None),
                              "%D/%M/%Y %h:%m:%s"))
-        f = "2" / 2
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
@@ -197,7 +200,6 @@ def bot(bot):
 
     try:
         bot.polling(none_stop=True, interval=0)
-    except Exception as e:
+    except Exception:
         for i in message_about_error:
             bot.send_message(i, f"error: \n {traceback.format_exc()}")
-        bot.polling(none_stop=True, interval=0)
