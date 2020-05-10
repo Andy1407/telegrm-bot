@@ -66,6 +66,7 @@ def bot(bot):
                          FormatDate(
                              datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None),
                              "%D/%M/%Y %h:%m:%s"))
+        f = "2"/2
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
