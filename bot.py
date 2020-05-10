@@ -35,7 +35,7 @@ def bot(bot):
     edit_list = ["EDIT_TEXT", "EDIT_DATE"]
 
     d_timezone = pytz.timezone("UTC")
-    logging.basicConfig(filename="mySnake.log",
+    logging.basicConfig(filename="errors.log",
                         format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                         level=logging.DEBUG)
 
@@ -47,6 +47,13 @@ def bot(bot):
             base_memory[message_id]["date"].pop(int(index))
             if not base_memory[message_id]["messages"]:
                 base_memory.pop(message_id)
+
+    @bot.message_handler(commands=['log'])
+    def logs(message):
+        if message.chat.id in message_about_error:
+            with open('errors.log') as error:
+                errors = error.read()
+            bot.send_message(message.chat.id, errors)
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
@@ -201,7 +208,6 @@ def bot(bot):
     while True:
         try:
             bot.polling(none_stop=True, interval=0)
-        except Exception:
-            for i in message_about_error:
-                bot.send_message(i, "Hello!")
+        except Exception as e:
+            logging.error(e)
             time.sleep(5)
