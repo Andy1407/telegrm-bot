@@ -201,4 +201,4 @@ def bot(bot):
     try:
         bot.polling(none_stop=True, interval=0)
     except Exception:
-        pass
+        time.sleep(5)
