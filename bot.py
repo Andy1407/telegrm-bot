@@ -202,4 +202,6 @@ def bot(bot):
         try:
             bot.polling(none_stop=True, interval=0)
         except Exception:
+            for i in message_about_error:
+                bot.send_message(i, "Hello!")
             time.sleep(5)
