@@ -199,4 +199,3 @@ def bot(bot, db):
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
     bot.polling(none_stop=True, interval=0)
-
