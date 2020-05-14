@@ -10,14 +10,13 @@ Base methods for calendar keyboard creation and processing.
 import calendar
 import datetime
 
+import pytz
 from telebot import types
 
-import bot as b
 
-
-def create_callback_data(action, year, month, day):
+def create_callback_data(*data):
     """ Create the callback data associated to each button"""
-    return ";".join([action, str(year), str(month), str(day)])
+    return ";".join(data)
 
 
 def separate_callback_data(data):
@@ -65,24 +64,27 @@ def create_calendar(year=None, month=None):
     return keyboard
 
 
-def process_calendar_selection(bot, call):
+def process_calendar_selection(bot, call, db):
     """
     Process the callback_query. This method generates a new calendar if forward or
     backward is pressed. This method should be called inside a CallbackQueryHandler.
     :param telebot.TeleBot bot: The bot, as provided by the CallbackQueryHandler
     :param telebot.types.CallbackQuery call: The CallbackQuery, as provided by the CallbackQueryHandler
+    :param database.Database db:
     :return: Returns a tuple (Boolean,datetime.datetime), indicating if a date is selected
                 and returning the date if so.
     """
     ret_data = (False, None, None)
 
-    (action, year, month, day) = separate_callback_data(call.data)
+    (action, year, month, day, step) = separate_callback_data(call.data)
     curr = datetime.datetime(int(year), int(month), 1)
-
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=call.id)
     elif action == "DAY":
-        now = datetime.datetime.now(tz=b.timezone_list[call.message.chat.id]).replace(tzinfo=None)
+        now = datetime.datetime.now(
+            tz=pytz.timezone(
+                db.show(table='user', show_column='TIMEZONE', ID=str(call.message.chat.id)))).replace(tzinfo=None)
+
         bot.delete_message(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id)

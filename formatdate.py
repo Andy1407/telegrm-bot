@@ -1,3 +1,6 @@
+import datetime
+
+
 def FormatDate(date, format_date):
     """
     converts the date to a convenient format
@@ -25,3 +28,12 @@ def FormatDate(date, format_date):
                 result = result.replace("%s", str(int(float(second))))
 
     return result
+
+
+def parse_date(date):
+    """
+    :param str date:
+    :return datetime.datetime:
+    """
+    Y, M, D, h, m, s = date.split()
+    return datetime.datetime(int(Y), int(M), int(D), int(h), int(m), int(float(s)))

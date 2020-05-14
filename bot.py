@@ -1,24 +1,24 @@
 import datetime
-import logging
-import time
 
 import pytz
-from timezonefinder import TimezoneFinder
 
 import listreminders
 import telegramcalendar
 from formatdate import FormatDate
+from type import record
+from type import text_list, number_of_reminder
 
 base_memory = {}
 timezone_list = {}
-editText = False
+editText = (False, None)
+editDate = (False, None)
 
 
-def bot(bot):
+def bot(bot, db):
     """
-
+    :param database.Database db:
     :param telebot.TeleBot bot:
-    :return:
+    :return: nothing
     """
 
     global editText
@@ -35,31 +35,12 @@ def bot(bot):
     edit_list = ["EDIT_TEXT", "EDIT_DATE"]
 
     d_timezone = pytz.timezone("UTC")
-    logging.basicConfig(filename="errors.log",
-                        format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                        level=logging.DEBUG)
-
-    def delete(message_id, index):
-        """delete message"""
-        global base_memory
-        if message_id in base_memory:
-            base_memory[message_id]["messages"].pop(int(index))
-            base_memory[message_id]["date"].pop(int(index))
-            if not base_memory[message_id]["messages"]:
-                base_memory.pop(message_id)
-
-    @bot.message_handler(commands=['log'])
-    def logs(message):
-        if message.chat.id in message_about_error:
-            with open('errors.log') as error:
-                errors = error.read()
-            bot.send_message(message.chat.id, errors)
 
     @bot.message_handler(commands=['start'])
     def start_message(message):
         """the start message"""
-        if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = d_timezone
+        if not db.show("user", ID=str(message.chat.id)):
+            db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
 
     @bot.message_handler(commands=['now'])
@@ -73,16 +54,14 @@ def bot(bot):
                          FormatDate(
                              datetime.datetime.now(tz=timezone_list[message.chat.id]).replace(tzinfo=None),
                              "%D/%M/%Y %h:%m:%s"))
-        f = "2"/2
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
         """menu for managing reminders"""
         global base_memory
-        if message.chat.id in base_memory:
+        if db.show("message", ID=str(message.chat.id)):
             bot.send_message(message.from_user.id, "please select reminder:",
-                             reply_markup=listreminders.create_list(base_memory[message.chat.id]["messages"],
-                                                                    base_memory[message.chat.id]["date"]))
+                             reply_markup=listreminders.create_list(db.show(table="message", ID=message.chat.id)))
         else:
             bot.send_message(message.from_user.id, "You haven't reminder")
 
@@ -93,13 +72,20 @@ def bot(bot):
         bot.register_next_step_handler(msg, set_timezone)
 
     def set_timezone(message):
-        """setting the timezone"""
+        """
+        :param telebot.types.Message message:
+        :return:
+        """
         global timezone_list
         if message.content_type == "location":
-            tf = TimezoneFinder()
-            timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
-            timezone_list[message.chat.id] = pytz.timezone(timezone)
-            bot.send_message(message.from_user.id, f"Your timezone is {timezone}.")
+            # tf = TimezoneFinder()
+            # timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
+            # timezone_list[message.chat.id] = pytz.timezone(timezone)
+            # bot.send_message(message.from_user.id, f"Your timezone is {timezone}.")
+            if db.show(table="user", ID=str(message.chat.id)):
+                db.edit(table="user", values={"TIMEZONE": f"'{timezone}'"}, ID=str(message.chat.id))
+            else:
+                db.add(table="user", ID=str(message.chat.id), TIMEZONE=f"'{timezone}'")
 
         else:
             msg = bot.send_message(message.from_user.id, "You didn't send your location")
@@ -119,95 +105,97 @@ def bot(bot):
         global base_memory
         global timezone_list
         if message.chat.id not in local_memory:
-            local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
-        if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = d_timezone
+            local_memory[message.chat.id] = {}
+        # if message.chat.id not in timezone_list:
+        #     timezone_list[message.chat.id] = d_timezone
+
+        if not db.show("user", ID=str(message.chat.id)):
+            db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
 
         msg = bot.send_message(message.from_user.id, 'please enter the message')
         bot.register_next_step_handler(msg, message_handler)
 
-    @bot.message_handler(commands=['chat_id'])
-    def chat_id(message):
-        bot.send_message(message.chat.id, str(message.chat.id))
-
     def message_handler(message):
         """message handler"""
-        global timezone_list
         global editText
-        if message.chat.id not in local_memory:
-            local_memory[message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
-        if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = d_timezone
-        local_memory[message.chat.id]["messages"].append(message)
-        if not editText:
+
+        local_memory[message.chat.id]["messages"] = message
+        if not editText[0]:
             bot.send_message(message.from_user.id, "choose date:",
                              reply_markup=telegramcalendar.create_calendar())
         else:
+            db.edit(table='message',
+                    values={"MESSAGE1": f"'{record(message)[0]}'", "MESSAGE2": f"'{record(message)[1]}'"},
+                    NUMBER=editText[1])
             bot.send_message(message.from_user.id, "reminder was edited")
-        editText = False
+        editText = (False, None)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in calendar_data)
-    def callback_query(call):
+    def callback_calendar(call):
         """calendar button click handler"""
-        global base_memory
-        global timezone_list
-        if call.message.chat.id not in local_memory:
-            local_memory[call.message.chat.id] = {"messages": messages.copy(), "date": date.copy()}
-        if call.message.chat.id not in timezone_list:
-            timezone_list[call.message.chat.id] = d_timezone
+        global editDate
 
-        selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call)
+        selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call, db)
 
         if selected:
-            local_memory[call.message.chat.id]["date"].append(time_sending)
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d.%m.%Y")))
-            base_memory = local_memory.copy()
+            # base_memory = local_memory.copy()
+            if editDate[0]:
+                db.add(table="message", ID=str(call.message.chat.id),
+                       DATE=f"'{FormatDate(time_sending, '%Y/%M/%D/%h/%m/%s')}'",
+                       TYPE=f"'{local_memory[call.message.chat.id]['messages'].content_type}'",
+                       MESSAGE1=f"'{record(local_memory[call.message.chat.id]['messages'])[0]}'",
+                       MESSAGE2=f"'{record(local_memory[call.message.chat.id]['messages'])[1]}'",
+                       SHOW_MESSAGE=f"'{text_list(local_memory[call.message.chat.id]['messages'])}'",
+                       NUMBER=f"{number_of_reminder(db.show(table='message', show_column='NUMBER', ID=str(call.message.chat.id))) + 1}")
 
-    @bot.callback_query_handler(
-        func=lambda call: len(call.data.split(";")) == 3 and call.data.split(";")[2] == "list")
+                local_memory.pop(call.message.chat.id)
+            else:
+                db.edit(table="message", values={"DATE": f"'{FormatDate(time_sending, '%Y/%M/%D/%h/%m/%s')}'"},
+                        NUMBER=editDate[1])
+
+                editDate = (False, None)
+
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "1")
     def reminder_list(call):
         """list of reminders click handler"""
         listreminders.process_reminder_selection(bot, call)
 
-    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in option_list)
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "2")
     def option_menu(call):
         """option button click handler"""
         global base_memory
-        action, index, reminder = call.data.split(";")
+        action, number, reminder, step = call.data.split(";")
         if action == "DELETE":
-            delete(call.message.chat.id, index)
+            db.remove(table='message', ID=call.message.chat.id, NUMBER=number)
             bot.send_message(chat_id=call.message.chat.id, text="message was delete")
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
         else:
             listreminders.process_option_selection(bot, call)
 
-    @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in edit_list)
+    @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "3")
     def edit(call):
         global editText
-        action, index = call.data.split(";")
-        local_memory[call.message.chat.id]["date"].append(
-            local_memory[call.message.chat.id]["date"][int(index)])
-        local_memory[call.message.chat.id]["messages"].append(
-            local_memory[call.message.chat.id]["messages"][int(index)])
-        delete(call.message.chat.id, index)
+        global editDate
+        action, number, step = call.data.split(";")
+        # local_memory[call.message.chat.id]["date"].append(
+        #     local_memory[call.message.chat.id]["date"][int(number)])
+        # local_memory[call.message.chat.id]["messages"].append(
+        #     local_memory[call.message.chat.id]["messages"][int(number)])
+        # delete(call.message.chat.id, number)
 
         if action == "EDIT_TEXT":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
             local_memory[call.message.chat.id]["messages"].pop()
-            editText = True
+            editText = (True, number)
             msg = bot.send_message(call.message.chat.id, 'please enter the message')
             bot.register_next_step_handler(msg, message_handler)
 
         elif action == "EDIT_DATE":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-            local_memory[call.message.chat.id]["date"].pop()
-            bot.send_message(call.message.chat.id, "choose date:",
-                             reply_markup=telegramcalendar.create_calendar())
+            editDate = (True, number)
+            bot.send_message(call.message.chat.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
         elif action == "CANCEL":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-    while True:
-        try:
-            bot.polling(none_stop=True, interval=0)
-        except Exception as e:
-            logging.error(e)
-            time.sleep(5)
+
+    bot.polling(none_stop=True, interval=0)
