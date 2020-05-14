@@ -23,16 +23,10 @@ def bot(bot, db):
 
     global editText
     global timezone_list
-    global base_memory
-    message_about_error = [970352590]
 
     local_memory = {}
-    messages = []
-    date = []
 
     calendar_data = ["IGNORE", "DAY", "PREV-MONTH", "NEXT-MONTH"]
-    option_list = ["CANCEL", "EDIT", "DELETE"]
-    edit_list = ["EDIT_TEXT", "EDIT_DATE"]
 
     d_timezone = pytz.timezone("UTC")
 
@@ -45,10 +39,6 @@ def bot(bot, db):
 
     @bot.message_handler(commands=['now'])
     def now(message):
-        global timezone_list
-
-        if message.chat.id not in timezone_list:
-            timezone_list[message.chat.id] = d_timezone
 
         bot.send_message(message.from_user.id,
                          FormatDate(
@@ -58,7 +48,6 @@ def bot(bot, db):
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
         """menu for managing reminders"""
-        global base_memory
         if db.show("message", ID=str(message.chat.id)):
             bot.send_message(message.from_user.id, "please select reminder:",
                              reply_markup=listreminders.create_list(db.show(table="message", ID=message.chat.id)))
@@ -76,7 +65,6 @@ def bot(bot, db):
         :param telebot.types.Message message:
         :return:
         """
-        global timezone_list
         if message.content_type == "location":
             # tf = TimezoneFinder()
             # timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
@@ -94,20 +82,14 @@ def bot(bot, db):
     @bot.message_handler(commands=['cancel_all'])
     def cancel_all_message(message):
         """cancel all reminder"""
-        global base_memory
+        db.remove(table='message', ID=str(message.chat.id))
         bot.send_message(message.from_user.id, "All reminders were cancelled.")
-        if message.chat.id in local_memory:
-            base_memory.pop(message.chat.id)
 
     @bot.message_handler(commands=['reminder'])
     def reminder_handler(message):
         """reminder handler"""
-        global base_memory
-        global timezone_list
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {}
-        # if message.chat.id not in timezone_list:
-        #     timezone_list[message.chat.id] = d_timezone
 
         if not db.show("user", ID=str(message.chat.id)):
             db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
@@ -139,7 +121,6 @@ def bot(bot, db):
 
         if selected:
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d.%m.%Y")))
-            # base_memory = local_memory.copy()
             if editDate[0]:
                 db.add(table="message", ID=str(call.message.chat.id),
                        DATE=f"'{FormatDate(time_sending, '%Y/%M/%D/%h/%m/%s')}'",
@@ -178,11 +159,6 @@ def bot(bot, db):
         global editText
         global editDate
         action, number, step = call.data.split(";")
-        # local_memory[call.message.chat.id]["date"].append(
-        #     local_memory[call.message.chat.id]["date"][int(number)])
-        # local_memory[call.message.chat.id]["messages"].append(
-        #     local_memory[call.message.chat.id]["messages"][int(number)])
-        # delete(call.message.chat.id, number)
 
         if action == "EDIT_TEXT":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
