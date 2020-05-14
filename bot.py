@@ -2,11 +2,11 @@ import datetime
 
 import pytz
 
-import listreminders
-import telegramcalendar
-from formatdate import FormatDate
-from type import record
-from type import text_list, number_of_reminder
+from add import listreminders, telegramcalendar
+from add.database import Database
+from add.formatdate import FormatDate
+from add.type import record
+from add.type import text_list, number_of_reminder
 
 base_memory = {}
 timezone_list = {}
@@ -14,13 +14,12 @@ editText = (False, None)
 editDate = (False, None)
 
 
-def bot(bot, db):
+def bot(bot):
     """
-    :param database.Database db:
     :param telebot.TeleBot bot:
     :return: nothing
     """
-
+    db = Database('db')
     global editText
     global timezone_list
 

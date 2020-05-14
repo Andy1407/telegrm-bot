@@ -2,20 +2,20 @@ import datetime
 
 import pytz
 
-from formatdate import parse_date
-from type import send
+from add.database import Database
+from add.formatdate import parse_date
+from add.type import send
 
 
-def reminder(bot, db):
+def reminder(bot):
     """
     :param telebot.TeleBot bot:
-    :param database.Database db:
     :return:
     """
+
     while True:
         try:
-            from bot import base_memory, timezone_list
-            delete_list = []
+            db = Database('db')
             memory = db.show(table="message")
             for user in memory:  # проходит по пользователем
                 id_user, date, type, message1, message2, show_message, number = user

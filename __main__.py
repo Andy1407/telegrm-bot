@@ -3,8 +3,8 @@ from threading import Thread
 import telebot as tb
 
 import reminder
+from add.database import Database
 from bot import bot
-from database import Database
 
 
 def main():
@@ -17,8 +17,8 @@ def main():
 
     base_bot = tb.TeleBot(TOKEN)
 
-    tread_bot = Thread(target=bot, args=(base_bot, db,))
-    tread_reminder = Thread(target=reminder.reminder, args=(base_bot, db,))
+    tread_bot = Thread(target=bot, args=(base_bot,))
+    tread_reminder = Thread(target=reminder.reminder, args=(base_bot,))
 
     tread_bot.start()
     tread_reminder.start()
