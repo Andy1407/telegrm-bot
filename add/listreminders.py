@@ -5,11 +5,15 @@ from add.formatdate import parse_date
 
 def create_list(message):
     list_reminders = InlineKeyboardMarkup()
+    number_list = []
     for i in range(len(message)):
         user_id, date, type, message1, message2, show_message, number = message[i]
-        list_reminders.add(
-            InlineKeyboardButton(f"{type}: {show_message}" + f" {parse_date(date).strftime('%d.%m.%Y')}",
-                                 callback_data=f"{show_message};{parse_date(date).strftime('%d.%m.%Y')};{number};1"))
+        if number not in number_list:
+            list_reminders.add(
+                InlineKeyboardButton(f"{show_message}" + f" ({parse_date(date).strftime('%d.%m.%Y')})",
+                                     callback_data=f"{show_message};{parse_date(date).strftime('%d.%m.%Y')};{number};1"))
+
+        number_list.append(number)
     list_reminders.add(InlineKeyboardButton("cancel", callback_data=f"CANCEL;;;1"))
 
     return list_reminders
@@ -35,7 +39,7 @@ def process_reminder_selection(bot, message):
     if message.data.split(";")[0] == "CANCEL":
         bot.delete_message(chat_id=message.message.chat.id, message_id=message.message.message_id)
     else:
-        bot.edit_message_text(text=message.data.split(";")[0]+f"({message.data.split(';')})",
+        bot.edit_message_text(text=message.data.split(";")[0]+f"({message.data.split(';')[1]}):",
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
                               reply_markup=option(message.data.split(";")[2], message.data.split(";")[0]))

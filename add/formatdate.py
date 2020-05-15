@@ -35,5 +35,5 @@ def parse_date(date):
     :param str date:
     :return datetime.datetime:
     """
-    Y, M, D, h, m, s = date.split()
+    Y, M, D, h, m, s = date.split("/")
     return datetime.datetime(int(Y), int(M), int(D), int(h), int(m), int(float(s)))

@@ -16,6 +16,7 @@ from telebot import types
 
 def create_callback_data(*data):
     """ Create the callback data associated to each button"""
+    data = list(map(str, data))
     return ";".join(data)
 
 
@@ -76,14 +77,14 @@ def process_calendar_selection(bot, call, db):
     """
     ret_data = (False, None, None)
 
-    (action, year, month, day, step) = separate_callback_data(call.data)
+    (action, year, month, day) = separate_callback_data(call.data)
     curr = datetime.datetime(int(year), int(month), 1)
     if action == "IGNORE":
         bot.answer_callback_query(callback_query_id=call.id)
     elif action == "DAY":
         now = datetime.datetime.now(
             tz=pytz.timezone(
-                db.show(table='user', show_column='TIMEZONE', ID=str(call.message.chat.id)))).replace(tzinfo=None)
+                db.show(table='user', show_column='TIMEZONE', ID=str(call.message.chat.id))[0][0])).replace(tzinfo=None)
 
         bot.delete_message(
             chat_id=call.message.chat.id,

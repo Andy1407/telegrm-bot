@@ -10,12 +10,12 @@ from bot import bot
 def main():
     TOKEN = "731585587:AAFoo1xgnU7wBo92Yjwt1t-AKZFadpLFKRs"
 
-    db = Database(name_database="db")
+    base_bot = tb.TeleBot(TOKEN)
+
+    db = Database('db')
     db.add_tables(name_table="message", ID="INT", DATE="TEXT", TYPE="TEXT", MESSAGE1="TEXT", MESSAGE2="TEXT",
                   SHOW_MESSAGE="TEXT", NUMBER="INT")
     db.add_tables(name_table="user", ID="INT", TIMEZONE="TEXT")
-
-    base_bot = tb.TeleBot(TOKEN)
 
     tread_bot = Thread(target=bot, args=(base_bot,))
     tread_reminder = Thread(target=reminder.reminder, args=(base_bot,))

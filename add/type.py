@@ -98,9 +98,16 @@ def text_list(message):
 
 
 def number_of_reminder(message):
-    number = 0
+    maximum = 0
     for i in message:
-        if int(i) > number:
-            number = int(i)
+        if int(i[0]) > maximum:
+            maximum = int(i[0])
 
-    return number
+    minimum = maximum
+    for i in message:
+        if int(i[0]) < minimum:
+            minimum = int(i[0])
+    if minimum <= 1:
+        return maximum + 1
+    else:
+        return minimum - 1

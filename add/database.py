@@ -3,15 +3,15 @@ import sqlite3
 
 def condition(conditions):
     condition = []
-    for i in list(conditions.items()):
-        condition.append("=".join(i))
+    for i in conditions:
+        condition.append(f"{i}={conditions[i]}")
     return ' AND '.join(condition)
 
 
 class Database:
     def __init__(self, name_database):
         self.name_database = name_database
-        self.connection = sqlite3.connect(f"{name_database}.sqlite3", check_same_thread=True)
+        self.connection = sqlite3.connect(f"{name_database}.db", check_same_thread=True)
         self.cursor = self.connection.cursor()
 
     def add(self, table, **value):
