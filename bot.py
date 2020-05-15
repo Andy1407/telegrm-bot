@@ -133,9 +133,14 @@ def bot(bot):
 
                 local_memory.pop(call.message.chat.id)
             else:
-                for date in time_sending:
-                    db.edit(table="message", values={"DATE": f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'"},
-                            NUMBER=editDate[1])
+                old_dates = db.show(table="message", show_column="DATE", ID=call.message.chat.id, NUMBER=editDate[1])
+                for date in range(len(time_sending)):
+                    if time_sending[date] > old_dates[date][0]:
+                        date3 = time_sending[date]-(time_sending[date]-old_dates[date][0])
+                    else:
+                        date3 = old_dates[date][0]-(old_dates[date][0]-time_sending[date])
+                    db.edit(table="message", values={"DATE": f"'{FormatDate(time_sending[date], '%Y/%M/%D/%h/%m/%s')}'"},
+                            NUMBER=editDate[1], ID=call.message.chat.id, DATE=date3)
 
                 editDate = (False, None)
 

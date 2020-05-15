@@ -39,7 +39,7 @@ def process_reminder_selection(bot, message):
     if message.data.split(";")[0] == "CANCEL":
         bot.delete_message(chat_id=message.message.chat.id, message_id=message.message.message_id)
     else:
-        bot.edit_message_text(text=message.data.split(";")[0]+f"({message.data.split(';')[1]}):",
+        bot.edit_message_text(text=message.data.split(";")[0] + f"({message.data.split(';')[1]}):",
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
                               reply_markup=option(message.data.split(";")[2], message.data.split(";")[0]))

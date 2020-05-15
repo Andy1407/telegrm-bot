@@ -10,14 +10,14 @@ from add.type import send
 def reminder(bot):
     """
     :param telebot.TeleBot bot:
-    :return:
+    :return: return reminder in due time
     """
 
     while True:
         try:
             db = Database('db')
             memory = db.show(table="message")
-            for user in memory:  # проходит по пользователем
+            for user in memory:
                 id_user, date, type, message1, message2, show_message, number = user
                 timezone = db.show(table="user", show_column="TIMEZONE", ID=id_user)
                 now = datetime.datetime.now(tz=pytz.timezone(timezone)).replace(tzinfo=None)

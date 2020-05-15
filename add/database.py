@@ -46,13 +46,10 @@ class Database:
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
-    def add_tables(self, name_table, columnKEY=None, columnKEY2=None, tableKEY=None, **columns):
+    def add_tables(self, name_table, **columns):
         column = []
         for i in columns:
             column.append(f"{i} {columns[i]}")
-
-        if columnKEY and columnKEY2 and tableKEY:
-            column.append(f"FOREIGN KEY ({columnKEY}) REFERENCES {tableKEY}({columnKEY2}))")
 
         sql = f"CREATE TABLE IF NOT EXISTS {name_table} ({', '.join(column)})"
         self.cursor.execute(sql)
