@@ -23,7 +23,7 @@ def reminder(bot):
                 now = datetime.datetime.now(tz=pytz.timezone(timezone)).replace(tzinfo=None)
                 if now >= parse_date(date):
                     send(bot, int(id_user), type, message1, message2)
-                    db.remove(table='message', ID=id_user, DATE=date, NUMBER=number)
+                    db.remove(table='message', ID=id_user, DATE=f"'{date}'", NUMBER=number)
 
         except Exception:
             continue
