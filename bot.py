@@ -4,7 +4,7 @@ import pytz
 
 from add import listreminders, telegramcalendar
 from add.database import Database
-from add.formatdate import FormatDate
+from add.formatdate import FormatDate, parse_date
 from add.type import record
 from add.type import text_list, number_of_reminder
 
@@ -135,10 +135,11 @@ def bot(bot):
             else:
                 old_dates = db.show(table="message", show_column="DATE", ID=call.message.chat.id, NUMBER=editDate[1])
                 for date in range(len(time_sending)):
-                    if time_sending[date] > old_dates[date][0]:
-                        date3 = time_sending[date]-(time_sending[date]-old_dates[date][0])
+                    old_date = parse_date(old_dates[date][0])
+                    if time_sending[date] > old_date:
+                        date3 = time_sending[date]-(time_sending[date]-old_date)
                     else:
-                        date3 = old_dates[date][0]-(old_dates[date][0]-time_sending[date])
+                        date3 = old_date-(old_date-time_sending[date])
                     db.edit(table="message", values={"DATE": f"'{FormatDate(time_sending[date], '%Y/%M/%D/%h/%m/%s')}'"},
                             NUMBER=editDate[1], ID=call.message.chat.id, DATE=date3)
 
