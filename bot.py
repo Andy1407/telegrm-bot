@@ -1,6 +1,7 @@
 import datetime
 
 import pytz
+from timezonefinder import TimezoneFinder
 
 from add import listreminders, telegramcalendar
 from add.database import Database
@@ -53,7 +54,7 @@ def bot(bot):
             bot.send_message(message.from_user.id, "You haven't reminder")
 
     @bot.message_handler(commands=['timezone'])
-    def timezone(message):
+    def start_timezone(message):
         """send message about setting the timezone"""
         msg = bot.send_message(message.from_user.id, 'please send your location')
         bot.register_next_step_handler(msg, set_timezone)
@@ -65,10 +66,15 @@ def bot(bot):
         """
         db = Database('db')
         if message.content_type == "location":
+            tf = TimezoneFinder()
+            timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
+
             if db.show(table="user", ID=str(message.chat.id)):
                 db.edit(table="user", values={"TIMEZONE": f"'{timezone}'"}, ID=str(message.chat.id))
             else:
                 db.add(table="user", ID=str(message.chat.id), TIMEZONE=f"'{timezone}'")
+
+            bot.send_message(message.from_user.id, f"Your timezone is {timezone}")
 
         else:
             msg = bot.send_message(message.from_user.id, "You didn't send your location")
