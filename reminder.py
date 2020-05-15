@@ -20,7 +20,6 @@ def reminder(bot):
             for user in memory:
                 id_user, date, type, message1, message2, show_message, number = user
                 timezone = db.show(table="user", show_column="TIMEZONE", ID=id_user)[0][0]
-                print(timezone)
                 now = datetime.datetime.now(tz=pytz.timezone(timezone)).replace(tzinfo=None)
                 if now >= parse_date(date):
                     send(bot, int(id_user), type, message1, message2)

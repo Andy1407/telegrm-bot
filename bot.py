@@ -1,6 +1,3 @@
-import datetime
-
-import pytz
 from timezonefinder import TimezoneFinder
 
 from add import listreminders, telegramcalendar
@@ -33,15 +30,6 @@ def bot(bot):
         if not db.show("user", ID=str(message.chat.id)):
             db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
-
-    @bot.message_handler(commands=['now'])
-    def now(message):
-        db = Database('db')
-        timezone = db.show(table="user", show_column="TIMEZONE", ID=str(message.chat.id))[0][0]
-        bot.send_message(message.from_user.id,
-                         FormatDate(
-                             datetime.datetime.now(tz=pytz.timezone(timezone)).replace(tzinfo=None),
-                             "%D/%M/%Y %h:%m:%s"))
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
