@@ -84,7 +84,7 @@ def text_list(message):
     elif message.content_type == "photo":
         return f"{message.content_type}: {message.photo.file_size}"
     elif message.content_type == "sticker":
-        return f"{message.content_type}: {message.sticker.set_name}"
+        return f"{message.content_type}: {message.sticker.emoji}"
     elif message.content_type == "video":
         return f"{message.content_type}: {message.video.duration}"
     elif message.content_type == "video_note":

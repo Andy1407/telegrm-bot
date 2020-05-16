@@ -14,6 +14,7 @@ editDate = (False, None)
 
 def bot(bot):
     """
+    processes user requests using the telebot library
     :param telebot.TeleBot bot:
     :return: nothing
     """
@@ -48,10 +49,7 @@ def bot(bot):
         bot.register_next_step_handler(msg, set_timezone)
 
     def set_timezone(message):
-        """
-        :param telebot.types.Message message:
-        :return:
-        """
+        """setting the timezone"""
         db = Database('db')
         if message.content_type == "location":
             tf = TimezoneFinder()
@@ -77,7 +75,7 @@ def bot(bot):
 
     @bot.message_handler(commands=['reminder'])
     def reminder_handler(message):
-        """reminder handler"""
+        """send message about setting the reminder"""
         db = Database('db')
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {}
@@ -89,7 +87,7 @@ def bot(bot):
         bot.register_next_step_handler(msg, message_handler)
 
     def message_handler(message):
-        """message handler"""
+        """show calendar for select of date and setting message of reminder"""
         global editText
         db = Database('db')
 
@@ -106,7 +104,7 @@ def bot(bot):
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[0] in calendar_data)
     def callback_calendar(call):
-        """calendar button click handler"""
+        """setting date of reminder"""
         global editDate
         db = Database('db')
         selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call, db)
@@ -117,6 +115,7 @@ def bot(bot):
                 number = number_of_reminder(
                     db.show(table='message', show_column='NUMBER', ID=str(call.message.chat.id)))
                 for date in time_sending:
+
                     db.add(table="message", ID=str(call.message.chat.id),
                            DATE=f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'",
                            TYPE=f"'{local_memory[call.message.chat.id]['messages'].content_type}'",
@@ -135,12 +134,12 @@ def bot(bot):
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "1")
     def reminder_list(call):
-        """list of reminders click handler"""
+        """show menu for edit the reminder"""
         listreminders.process_reminder_selection(bot, call)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "2")
     def option_menu(call):
-        """option button click handler"""
+        """delete the reminder or show edit menu"""
         db = Database('db')
         action, number, reminder, step = call.data.split(";")
         if action == "DELETE":
@@ -152,6 +151,7 @@ def bot(bot):
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "3")
     def edit(call):
+        """edit the content of reminder"""
         global editText
         global editDate
 

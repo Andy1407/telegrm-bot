@@ -4,6 +4,11 @@ from add.formatdate import parse_date
 
 
 def create_list(message):
+    """
+    create of reminder list
+    :param list message: list of reminder
+    :return: Returns the InlineKeyboardMarkup object with the reminder list.
+    """
     list_reminders = InlineKeyboardMarkup()
     number_list = []
     for i in range(len(message)):
@@ -20,6 +25,12 @@ def create_list(message):
 
 
 def option(number, reminder):
+    """
+    create of menu for edit or delete reminder
+    :param str number: number of reminder
+    :param str reminder: reminder, which you chose
+    :return: Returns the InlineKeyboardMarkup object with the list of options.
+    """
     list_reminders = InlineKeyboardMarkup()
     list_reminders.add(InlineKeyboardButton("edit", callback_data=f"EDIT;{number};{reminder};2"))
     list_reminders.add(InlineKeyboardButton("delete", callback_data=f"DELETE;{number};{reminder};2"))
@@ -28,6 +39,11 @@ def option(number, reminder):
 
 
 def edit(number):
+    """
+    create of detailed menu for edit reminder
+    :param str number: number of reminder
+    :return: Returns the InlineKeyboardMarkup object with the edit list.
+    """
     edit_list = InlineKeyboardMarkup()
     edit_list.add(InlineKeyboardButton("edit the text", callback_data=f"EDIT_TEXT;{number};3"))
     edit_list.add(InlineKeyboardButton("edit the date", callback_data=f"EDIT_DATE;{number};3"))

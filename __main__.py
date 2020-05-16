@@ -13,9 +13,9 @@ def main():
     base_bot = tb.TeleBot(TOKEN)
 
     db = Database('db')
-    db.add_tables(name_table="message", ID="INT", DATE="TEXT", TYPE="TEXT", MESSAGE1="TEXT", MESSAGE2="TEXT",
-                  SHOW_MESSAGE="TEXT", NUMBER="INT")
-    db.add_tables(name_table="user", ID="INT", TIMEZONE="TEXT")
+    db.add_table(name_table="message", ID="INT", DATE="TEXT", TYPE="TEXT", MESSAGE1="TEXT", MESSAGE2="TEXT",
+                 SHOW_MESSAGE="TEXT", NUMBER="INT")
+    db.add_table(name_table="user", ID="INT", TIMEZONE="TEXT")
 
     tread_bot = Thread(target=bot, args=(base_bot,))
     tread_reminder = Thread(target=reminder.reminder, args=(base_bot,))

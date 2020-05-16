@@ -9,8 +9,9 @@ from add.type import send
 
 def reminder(bot):
     """
-    :param telebot.TeleBot bot:
-    :return: return reminder in due time
+    views of database and show reminder in due time
+    :param telebot.TeleBot bot: bot
+    :return: nothing
     """
 
     while True:
