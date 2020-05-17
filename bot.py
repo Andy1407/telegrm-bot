@@ -4,7 +4,7 @@ from add import listreminders, telegramcalendar
 from add.database import Database
 from add.formatdate import FormatDate
 from add.type import record
-from add.type import text_list, number_of_reminder
+from add.type import view_name, number_of_reminder
 
 base_memory = {}
 timezone_list = {}
@@ -98,7 +98,7 @@ def bot(bot):
         else:
             db.edit(table='message',
                     values={"MESSAGE1": f"'{record(message)[0]}'", "MESSAGE2": f"'{record(message)[1]}'",
-                            "SHOW_MESSAGE": f"'{text_list(message)}'"}, NUMBER=editText[1])
+                            "SHOW_MESSAGE": f"'{view_name(message)}'"}, NUMBER=editText[1])
             bot.send_message(message.from_user.id, "reminder was edited")
         editText = (False, None)
 
@@ -121,7 +121,7 @@ def bot(bot):
                            TYPE=f"'{local_memory[call.message.chat.id]['messages'].content_type}'",
                            MESSAGE1=f"'{record(local_memory[call.message.chat.id]['messages'])[0]}'",
                            MESSAGE2=f"'{record(local_memory[call.message.chat.id]['messages'])[1]}'",
-                           SHOW_MESSAGE=f"'{text_list(local_memory[call.message.chat.id]['messages'])}'",
+                           SHOW_MESSAGE=f"'{view_name(local_memory[call.message.chat.id]['messages'])}'",
                            NUMBER=f"{number}")
 
                 local_memory.pop(call.message.chat.id)
@@ -135,7 +135,7 @@ def bot(bot):
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "1")
     def reminder_list(call):
         """show menu for edit the reminder"""
-        listreminders.process_reminder_selection(bot, call)
+        listreminders.processing_selected_reminder(bot, call)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "2")
     def option_menu(call):
@@ -147,7 +147,7 @@ def bot(bot):
             bot.send_message(chat_id=call.message.chat.id, text="message was delete")
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
         else:
-            listreminders.process_option_selection(bot, call)
+            listreminders.processing_selected_option(bot, call)
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "3")
     def edit(call):

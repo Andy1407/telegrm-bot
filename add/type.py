@@ -1,5 +1,6 @@
 def send(bot, chat, type, message1, message2):
     """
+    send reminder
     :param str message2: message
     :param str message1: message
     :param str type: type
@@ -40,8 +41,9 @@ def send(bot, chat, type, message1, message2):
 
 def record(message):
     """
+    returns data for record in database
     :param telebot.types.Message message:
-    :return: nothing
+    :return: returns data for record in database
     """
     if message.content_type == "text":
         return str(message.text), "NULL"  # str
@@ -74,7 +76,12 @@ def record(message):
         return str(message.contact.phone_number), str(message.contact.first_name)  # str str
 
 
-def text_list(message):
+def view_name(message):
+    """
+    returns data for show in list of reminder
+    :param telebot.types.Message message: message, which should be shown
+    :return: returns data for show in list of reminder
+    """
     if message.content_type == "text":
         return f"{message.content_type}: {message.text}"
     elif message.content_type == "audio":
@@ -98,6 +105,7 @@ def text_list(message):
 
 
 def number_of_reminder(message):
+    """returns next number for reminder"""
     maximum = 0
     for i in message:
         if int(i[0]) > maximum:

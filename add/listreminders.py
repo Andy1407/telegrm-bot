@@ -51,17 +51,20 @@ def edit(number):
     return edit_list
 
 
-def process_reminder_selection(bot, message):
-    if message.data.split(";")[0] == "CANCEL":
+def processing_selected_reminder(bot, message):
+    """processing the selected reminder"""
+    show_message, date, number, step = message.data.split(";")
+    if show_message == "CANCEL":
         bot.delete_message(chat_id=message.message.chat.id, message_id=message.message.message_id)
     else:
-        bot.edit_message_text(text=message.data.split(";")[0] + f"({message.data.split(';')[1]}):",
+        bot.edit_message_text(text=show_message + f"({date}):",
                               chat_id=message.message.chat.id,
                               message_id=message.message.message_id,
-                              reply_markup=option(message.data.split(";")[2], message.data.split(";")[0]))
+                              reply_markup=option(number, show_message))
 
 
-def process_option_selection(bot, message):
+def processing_selected_option(bot, message):
+    """processing the selected option"""
     action, number, reminder, step = message.data.split(";")
     if action == "CANCEL":
         bot.delete_message(chat_id=message.message.chat.id, message_id=message.message.message_id)
