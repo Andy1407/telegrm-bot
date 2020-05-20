@@ -6,8 +6,6 @@ from add.formatdate import FormatDate
 from add.type import record
 from add.type import view_name, number_of_reminder
 
-base_memory = {}
-timezone_list = {}
 editText = (False, None)
 editDate = (False, None)
 
