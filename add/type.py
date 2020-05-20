@@ -9,34 +9,34 @@ def send(bot, chat, type, message1, message2):
     :return: nothing
     """
     if type == "text":
-        bot.send_message(chat, message1)  # str
+        bot.send_message(chat, message1)
 
     elif type == "audio":
-        bot.send_audio(chat, message1)  # str
+        bot.send_audio(chat, message1)
 
     elif type == "document":
-        bot.send_document(chat, message1)  # str
+        bot.send_document(chat, message1)
 
     elif type == "photo":
-        bot.send_photo(chat, message1)  # str
+        bot.send_photo(chat, message1)
 
     elif type == "sticker":
-        bot.send_sticker(chat, message1)  # str
+        bot.send_sticker(chat, message1)
 
     elif type == "video":
-        bot.send_video(chat, message1)  # str
+        bot.send_video(chat, message1)
 
     elif type == "video_note":
-        bot.send_video_note(chat, message1)  # str
+        bot.send_video_note(chat, message1)
 
     elif type == "voice":
-        bot.send_voice(chat, message1)  # str
+        bot.send_voice(chat, message1)
 
     elif type == "location":
-        bot.send_location(chat, float(message1), float(message2))  # float float
+        bot.send_location(chat, float(message1), float(message2))
 
     elif type == "contact":
-        bot.send_contact(chat, message1, message2)  # str str
+        bot.send_contact(chat, message1, message2)
 
 
 def record(message):
@@ -46,34 +46,34 @@ def record(message):
     :return: returns data for record in database
     """
     if message.content_type == "text":
-        return str(message.text), "NULL"  # str
+        return str(message.text), "NULL"
 
     elif message.content_type == "audio":
-        return str(message.audio.file_id), "NULL"  # str
+        return str(message.audio.file_id), "NULL"
 
     elif message.content_type == "document":
-        return str(message.document.file_id), "NULL"  # str
+        return str(message.document.file_id), "NULL"
 
     elif message.content_type == "photo":
-        return str(message.photo[0].file_id), "NULL"  # str
+        return str(message.photo[0].file_id), "NULL"
 
     elif message.content_type == "sticker":
-        return str(message.sticker.file_id), "NULL"  # str
+        return str(message.sticker.file_id), "NULL"
 
     elif message.content_type == "video":
-        return str(message.video.file_id), "NULL"  # str
+        return str(message.video.file_id), "NULL"
 
     elif message.content_type == "video_note":
-        return str(message.video_note.file_id), "NULL"  # str
+        return str(message.video_note.file_id), "NULL"
 
     elif message.content_type == "voice":
-        return str(message.voice.file_id), "NULL"  # str
+        return str(message.voice.file_id), "NULL"
 
     elif message.content_type == "location":
-        return str(message.location.latitude), str(message.location.longitude)  # float float
+        return str(message.location.latitude), str(message.location.longitude)
 
     elif message.content_type == "contact":
-        return str(message.contact.phone_number), str(message.contact.first_name)  # str str
+        return str(message.contact.phone_number), str(message.contact.first_name)
 
 
 def view_name(message):
@@ -93,9 +93,9 @@ def view_name(message):
     elif message.content_type == "sticker":
         return f"{message.content_type}: {message.sticker.emoji}"
     elif message.content_type == "video":
-        return f"{message.content_type}: {message.video.duration}"
+        return f"{message.content_type}: {message.video.duration} seconds"
     elif message.content_type == "video_note":
-        return f"{message.content_type}: {message.video_note.duration}"
+        return f"{message.content_type}: {message.video_note.duration} seconds"
     elif message.content_type == "voice":
         return f"{message.content_type}: {message.voice.duration}"
     elif message.content_type == "location":

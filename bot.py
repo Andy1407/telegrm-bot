@@ -1,3 +1,5 @@
+import os
+
 from timezonefinder import TimezoneFinder
 
 from add import listreminders, telegramcalendar
@@ -6,8 +8,6 @@ from add.formatdate import FormatDate
 from add.type import record
 from add.type import view_name, number_of_reminder
 
-base_memory = {}
-timezone_list = {}
 editText = (False, None)
 editDate = (False, None)
 
@@ -15,9 +15,10 @@ editDate = (False, None)
 def bot(bot):
     """
     processes user requests using the telebot library
-    :param telebot.TeleBot bot:
+    :param telebot.TeleBot bot: The bot
     :return: nothing
     """
+
     global editText
 
     local_memory = {}
@@ -45,6 +46,7 @@ def bot(bot):
     @bot.message_handler(commands=['timezone'])
     def start_timezone(message):
         """send message about setting the timezone"""
+        ghfh
         msg = bot.send_message(message.from_user.id, 'please send your location')
         bot.register_next_step_handler(msg, set_timezone)
 
@@ -115,7 +117,6 @@ def bot(bot):
                 number = number_of_reminder(
                     db.show(table='message', show_column='NUMBER', ID=str(call.message.chat.id)))
                 for date in time_sending:
-
                     db.add(table="message", ID=str(call.message.chat.id),
                            DATE=f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'",
                            TYPE=f"'{local_memory[call.message.chat.id]['messages'].content_type}'",
@@ -169,5 +170,8 @@ def bot(bot):
             bot.send_message(call.message.chat.id, "choose date:", reply_markup=telegramcalendar.create_calendar())
         elif action == "CANCEL":
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
-    bot.polling(none_stop=True, interval=0)
+    try:
+        bot.polling(none_stop=True, interval=0)
+    except Exception as e:
+        print(e)
+        os.system('python3 __main__.py')
