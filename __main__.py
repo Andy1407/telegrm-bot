@@ -21,8 +21,8 @@ def main():
     #     base_bot.send_message(message.chat.id, "hello:", reply_markup=create_time())
     # base_bot.polling()
 
-    tread_bot = Thread(target=bot, args=(base_bot,))
-    tread_reminder = Thread(target=reminder.reminder, args=(base_bot,))
+    tread_bot = Thread(target=bot, args=(base_bot,), daemon=True)
+    tread_reminder = Thread(target=reminder.reminder, args=(base_bot,), daemon=True)
 
     tread_bot.start()
     tread_reminder.start()
