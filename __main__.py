@@ -25,7 +25,6 @@ def main():
 
     tread_bot.join()
     tread_reminder.join()
-    """hello"""
 
 
 if __name__ == '__main__':
