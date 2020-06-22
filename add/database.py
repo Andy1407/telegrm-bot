@@ -11,11 +11,13 @@ def condition(conditions):
 
 
 class Database:
+    """
+            connect to database
+            :param str name_database: name of database for connect
+            """
     def __init__(self):
-        """
-        connect to database
-        :param str name_database: name of database for connect
-        """
+        self.connection = psycopg2.connect(os.environ.get('DATABASE_URL'), check_same_thread=True)
+        self.cursor = self.connection.cursor()
 
     def connect(self):
         self.connection = psycopg2.connect(os.environ.get('DATABASE_URL'), check_same_thread=True)
