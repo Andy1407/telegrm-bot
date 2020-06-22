@@ -1,4 +1,6 @@
-import sqlite3
+import os
+
+import psycopg2
 
 
 def condition(conditions):
@@ -15,7 +17,7 @@ class Database:
         :param str name_database: name of database for connect
         """
         self.name_database = name_database
-        self.connection = sqlite3.connect(f"{name_database}.db", check_same_thread=True)
+        self.connection = psycopg2.connect(os.environ.get('DATABASE_URL'), check_same_thread=True)
         self.cursor = self.connection.cursor()
 
     def add(self, table, **value):
