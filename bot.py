@@ -10,10 +10,11 @@ editText = (False, None)
 editDate = (False, None)
 
 
-def bot(bot):
+def bot(bot, db):
     """
     processes user requests using the telebot library
     :param telebot.TeleBot bot:
+    :param Database db:
     :return: nothing
     """
     global editText
@@ -25,7 +26,7 @@ def bot(bot):
     @bot.message_handler(commands=['start'])
     def start_message(message):
         """the start message"""
-        db = Database('db')
+        db.connect()
         if not db.show("user", ID=str(message.chat.id)):
             db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
@@ -33,7 +34,7 @@ def bot(bot):
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
         """menu for managing reminders"""
-        db = Database('db')
+        db.connect()
         if db.show("message", ID=str(message.chat.id)):
             bot.send_message(message.from_user.id, "please select reminder:",
                              reply_markup=listreminders.create_list(db.show(table="message", ID=message.chat.id)))
@@ -48,7 +49,7 @@ def bot(bot):
 
     def set_timezone(message):
         """setting the timezone"""
-        db = Database('db')
+        db.connect()
         if message.content_type == "location":
             tf = TimezoneFinder()
             timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
@@ -67,14 +68,14 @@ def bot(bot):
     @bot.message_handler(commands=['cancel_all'])
     def cancel_all_message(message):
         """cancel all reminder"""
-        db = Database('db')
+        db.connect()
         db.remove(table='message', ID=str(message.chat.id))
         bot.send_message(message.from_user.id, "All reminders were cancelled.")
 
     @bot.message_handler(commands=['reminder'])
     def reminder_handler(message):
         """send message about setting the reminder"""
-        db = Database('db')
+        db.connect()
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {}
 
@@ -87,7 +88,7 @@ def bot(bot):
     def message_handler(message):
         """show calendar for select of date and setting message of reminder"""
         global editText
-        db = Database('db')
+        db.connect()
 
         if not editText[0]:
             local_memory[message.chat.id]["messages"] = message
@@ -104,7 +105,7 @@ def bot(bot):
     def callback_calendar(call):
         """setting date of reminder"""
         global editDate
-        db = Database('db')
+        db.connect()
         selected, date2, time_sending = telegramcalendar.process_calendar_selection(bot, call, db)
 
         if selected:
@@ -138,7 +139,7 @@ def bot(bot):
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "2")
     def option_menu(call):
         """delete the reminder or show edit menu"""
-        db = Database('db')
+        db.connect()
         action, number, reminder, step = call.data.split(";")
         if action == "DELETE":
             db.remove(table='message', ID=call.message.chat.id, NUMBER=number)
