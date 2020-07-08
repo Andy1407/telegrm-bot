@@ -16,7 +16,7 @@ def reminder(bot):
 
     while True:
         try:
-            db = Database('db')
+            db = Database()
             memory = db.show(table="message")
             for user in memory:
                 id_user, date, type, message1, message2, show_message, number = user
