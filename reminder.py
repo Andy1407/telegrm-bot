@@ -2,9 +2,9 @@ import datetime
 
 import pytz
 
-from add.database import Database
 from add.formatdate import parse_date
 from add.type import send
+from database import Database
 
 
 def reminder(bot):

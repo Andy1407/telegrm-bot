@@ -1,7 +1,6 @@
 from timezonefinder import TimezoneFinder
 
 from add import listreminders, telegramcalendar
-from add.database import Database
 from add.formatdate import FormatDate
 from add.type import record
 from add.type import view_name, number_of_reminder
