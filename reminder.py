@@ -17,14 +17,14 @@ def reminder(bot):
     while True:
         try:
             db = Database()
-            memory = db.show(table="message")
+            memory = db.select(table="messages")
             for user in memory:
                 id_user, date, type, message1, message2, show_message, number = user
-                timezone = db.show(table="user", show_column="TIMEZONE", ID=id_user)[0][0]
+                timezone = db.select(table="users", show_column="TIMEZONE", ID=id_user)[0][0]
                 now = datetime.datetime.now(tz=pytz.timezone(timezone)).replace(tzinfo=None)
                 if now >= parse_date(date):
                     send(bot, int(id_user), type, message1, message2)
-                    db.remove(table='message', ID=id_user, DATE=f"'{date}'", NUMBER=number)
+                    db.remove(table='messages', ID=id_user, DATE=f"'{date}'", NUMBER=number)
 
         except Exception:
             continue

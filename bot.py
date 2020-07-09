@@ -26,17 +26,17 @@ def bot(bot, db):
     def start_message(message):
         """the start message"""
         db.connect()
-        if not db.show("user", ID=str(message.chat.id)):
-            db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
+        if not db.select("users", ID=str(message.chat.id)):
+            db.add(table="users", ID=str(message.chat.id), TIMEZONE="'UTC'")
         bot.send_message(message.from_user.id, "Enter '/reminder' to set a reminder.")
 
     @bot.message_handler(commands=['remind_list'])
     def remind_list(message):
         """menu for managing reminders"""
         db.connect()
-        if db.show("message", ID=str(message.chat.id)):
+        if db.select("messages", ID=str(message.chat.id)):
             bot.send_message(message.from_user.id, "please select reminder:",
-                             reply_markup=listreminders.create_list(db.show(table="message", ID=message.chat.id)))
+                             reply_markup=listreminders.create_list(db.select(table="messages", ID=message.chat.id)))
         else:
             bot.send_message(message.from_user.id, "You haven't reminder")
 
@@ -53,10 +53,10 @@ def bot(bot, db):
             tf = TimezoneFinder()
             timezone = tf.timezone_at(lng=message.location.longitude, lat=message.location.latitude)
 
-            if db.show(table="user", ID=str(message.chat.id)):
-                db.edit(table="user", values={"TIMEZONE": f"'{timezone}'"}, ID=str(message.chat.id))
+            if db.select(table="users", ID=str(message.chat.id)):
+                db.edit(table="users", values={"TIMEZONE": f"'{timezone}'"}, ID=str(message.chat.id))
             else:
-                db.add(table="user", ID=str(message.chat.id), TIMEZONE=f"'{timezone}'")
+                db.add(table="users", ID=str(message.chat.id), TIMEZONE=f"'{timezone}'")
 
             bot.send_message(message.from_user.id, f"Your timezone is {timezone}")
 
@@ -68,7 +68,7 @@ def bot(bot, db):
     def cancel_all_message(message):
         """cancel all reminder"""
         db.connect()
-        db.remove(table='message', ID=str(message.chat.id))
+        db.remove(table='messages', ID=str(message.chat.id))
         bot.send_message(message.from_user.id, "All reminders were cancelled.")
 
     @bot.message_handler(commands=['reminder'])
@@ -78,8 +78,8 @@ def bot(bot, db):
         if message.chat.id not in local_memory:
             local_memory[message.chat.id] = {}
 
-        if not db.show("user", ID=str(message.chat.id)):
-            db.add(table="user", ID=str(message.chat.id), TIMEZONE="'UTC'")
+        if not db.select("users", ID=str(message.chat.id)):
+            db.add(table="users", ID=str(message.chat.id), TIMEZONE="'UTC'")
 
         msg = bot.send_message(message.from_user.id, 'please enter the message')
         bot.register_next_step_handler(msg, message_handler)
@@ -94,7 +94,7 @@ def bot(bot, db):
             bot.send_message(message.from_user.id, "choose date:",
                              reply_markup=telegramcalendar.create_calendar())
         else:
-            db.edit(table='message',
+            db.edit(table='messages',
                     values={"MESSAGE1": f"'{record(message)[0]}'", "MESSAGE2": f"'{record(message)[1]}'",
                             "SHOW_MESSAGE": f"'{view_name(message)}'"}, NUMBER=editText[1])
             bot.send_message(message.from_user.id, "reminder was edited")
@@ -111,10 +111,10 @@ def bot(bot, db):
             bot.send_message(call.from_user.id, "You selected %s" % (date2.strftime("%d.%m.%Y")))
             if not editDate[0]:
                 number = number_of_reminder(
-                    db.show(table='message', show_column='NUMBER', ID=str(call.message.chat.id)))
+                    db.select(table='messages', show_column='NUMBER', ID=str(call.message.chat.id)))
                 for date in time_sending:
 
-                    db.add(table="message", ID=str(call.message.chat.id),
+                    db.add(table="messages", ID=str(call.message.chat.id),
                            DATE=f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'",
                            TYPE=f"'{local_memory[call.message.chat.id]['messages'].content_type}'",
                            MESSAGE1=f"'{record(local_memory[call.message.chat.id]['messages'])[0]}'",
@@ -125,7 +125,7 @@ def bot(bot, db):
                 local_memory.pop(call.message.chat.id)
             else:
                 for date in time_sending:
-                    db.edit(table="message", values={"DATE": f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'"},
+                    db.edit(table="messages", values={"DATE": f"'{FormatDate(date, '%Y/%M/%D/%h/%m/%s')}'"},
                             NUMBER=editDate[1], ID=call.message.chat.id)
 
                 editDate = (False, None)
@@ -141,7 +141,7 @@ def bot(bot, db):
         db.connect()
         action, number, reminder, step = call.data.split(";")
         if action == "DELETE":
-            db.remove(table='message', ID=call.message.chat.id, NUMBER=number)
+            db.remove(table='messages', ID=call.message.chat.id, NUMBER=number)
             bot.send_message(chat_id=call.message.chat.id, text="message was delete")
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
         else:

@@ -65,7 +65,7 @@ class Database:
         self.cursor.execute(sql)
         self.connection.commit()
 
-    def show(self, table, show_column="*", **conditions):
+    def select(self, table, show_column="*", **conditions):
         """
         show data form database
         :param str table: name of the data table that you want to view

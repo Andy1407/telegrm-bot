@@ -84,7 +84,7 @@ def process_calendar_selection(bot, call, db):
     elif action == "DAY":
         now = datetime.datetime.now(
             tz=pytz.timezone(
-                db.show(table='user', show_column='TIMEZONE', ID=str(call.message.chat.id))[0][0])).replace(tzinfo=None)
+                db.select(table='users', show_column='TIMEZONE', ID=str(call.message.chat.id))[0][0])).replace(tzinfo=None)
 
         bot.delete_message(
             chat_id=call.message.chat.id,
