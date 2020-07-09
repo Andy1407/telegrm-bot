@@ -65,18 +65,18 @@ class Database:
         self.cursor.execute(sql)
         self.connection.commit()
 
-    def select(self, table, show_column="*", **conditions):
+    def select(self, table, column="*", **conditions):
         """
         show data form database
         :param str table: name of the data table that you want to view
-        :param str show_column: columns, which you want to view
+        :param str column: columns, which you want to view
         :param str conditions: conditions of data, which you want to view
         :return: nothing
         """
         if conditions:
-            sql = f"SELECT {show_column} FROM {table} WHERE {condition(conditions)}"
+            sql = f"SELECT {column} FROM {table} WHERE {condition(conditions)}"
         else:
-            sql = f"SELECT {show_column} FROM {table}"
+            sql = f"SELECT {column} FROM {table}"
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
