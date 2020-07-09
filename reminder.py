@@ -4,10 +4,9 @@ import pytz
 
 from add.formatdate import parse_date
 from add.type import send
-from database import Database
 
 
-def reminder(bot):
+def reminder(bot, db):
     """
     views of database and show reminder in due time
     :param telebot.TeleBot bot: bot
@@ -16,7 +15,7 @@ def reminder(bot):
 
     while True:
         try:
-            db = Database()
+            db.connect()
             memory = db.select(table="messages")
             for user in memory:
                 id_user, date, type, message1, message2, show_message, number = user
