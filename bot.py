@@ -9,7 +9,7 @@ editText = (False, None)
 editDate = (False, None)
 
 
-def bot(bot, db):
+def botHandler(bot, db):
     """
     processes user requests using the telebot library
     :param telebot.TeleBot bot:
