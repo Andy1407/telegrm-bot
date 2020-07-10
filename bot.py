@@ -159,7 +159,6 @@ def botHandler(bot, db):
 
     @bot.callback_query_handler(func=lambda call: call.data.split(";")[-1] == "3")
     def edit(call):
-        """edit the content of reminder"""
         global editText
         global editDate
 
