@@ -44,14 +44,14 @@ def usetBot():
 
 
 def main():
-    TOKEN = os.environ.get('TOKEN') or ''
+#     TOKEN = os.environ.get('TOKEN') or ''
 
-    bot = tb.TeleBot(TOKEN)
+#     bot = tb.TeleBot(TOKEN)
 
-    db = Database()
+#     db = Database()
 
-    tread_bot = Thread(target=botHandler, args=(bot, db), daemon=True)
-    tread_reminder = Thread(target=reminder.reminder, args=(bot, db), daemon=True)
+#     tread_bot = Thread(target=botHandler, args=(bot, db), daemon=True)
+#     tread_reminder = Thread(target=reminder.reminder, args=(bot, db), daemon=True)
     thread_userBot = Thread(target=userBot, daemon=True)
 
     # tread_bot.start()
