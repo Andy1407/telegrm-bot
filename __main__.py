@@ -52,15 +52,16 @@ def main():
 
 #     tread_bot = Thread(target=botHandler, args=(bot, db), daemon=True)
 #     tread_reminder = Thread(target=reminder.reminder, args=(bot, db), daemon=True)
-    thread_userBot = Thread(target=userBot, daemon=True)
+#     thread_userBot = Thread(target=userBot, daemon=True)
 
     # tread_bot.start()
     # tread_reminder.start()
-    thread_userBot.start()
+#     thread_userBot.start()
 
     # tread_bot.join()
     # tread_reminder.join()
-    thread_userBot.join()
+#     thread_userBot.join()
+    userBot()
 
 
 if __name__ == '__main__':
