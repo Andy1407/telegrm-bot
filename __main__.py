@@ -12,7 +12,7 @@ from pyrogram.errors import FloodWait
 
 from time import sleep
 
-def usetBot():
+def userBot():
     app = Client("my_account")
 
 
