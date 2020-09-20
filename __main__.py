@@ -12,7 +12,24 @@ from pyrogram.errors import FloodWait
 
 from time import sleep
 
-def userBot():
+def main():
+#     TOKEN = os.environ.get('TOKEN') or ''
+
+#     bot = tb.TeleBot(TOKEN)
+
+#     db = Database()
+
+#     tread_bot = Thread(target=botHandler, args=(bot, db), daemon=True)
+#     tread_reminder = Thread(target=reminder.reminder, args=(bot, db), daemon=True)
+#     thread_userBot = Thread(target=userBot, daemon=True)
+
+    # tread_bot.start()
+    # tread_reminder.start()
+#     thread_userBot.start()
+
+    # tread_bot.join()
+    # tread_reminder.join()
+#     thread_userBot.join()
     app = Client("my_account")
 
 
@@ -41,27 +58,6 @@ def userBot():
 
 
     app.run()
-
-
-def main():
-#     TOKEN = os.environ.get('TOKEN') or ''
-
-#     bot = tb.TeleBot(TOKEN)
-
-#     db = Database()
-
-#     tread_bot = Thread(target=botHandler, args=(bot, db), daemon=True)
-#     tread_reminder = Thread(target=reminder.reminder, args=(bot, db), daemon=True)
-#     thread_userBot = Thread(target=userBot, daemon=True)
-
-    # tread_bot.start()
-    # tread_reminder.start()
-#     thread_userBot.start()
-
-    # tread_bot.join()
-    # tread_reminder.join()
-#     thread_userBot.join()
-    userBot()
 
 
 if __name__ == '__main__':
