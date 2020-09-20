@@ -3,3 +3,5 @@ pytz==2020.1
 telebot==0.0.3
 pyTelegramBotAPI==3.7.1
 psycopg2-binary==2.8.5
+pyrogram==1.0.7
+tgcrypto==1.2.1
